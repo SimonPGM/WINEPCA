@@ -35,5 +35,6 @@ library(factoextra)
 \newpage
 
 \pagestyle{myheadings}
+\setcounter{page}{3}
 
 \section{Introducción}
