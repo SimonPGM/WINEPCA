@@ -77,4 +77,112 @@ eigen_plot <- fviz_eig(mnist_pca, addlabels = T, ylim = c(0, 15))
 
 \section{Ajuste de modelos y comparación}
 
+Puesto que carece de sentido alguno realizar análisis de componentes principales sin llevar los
+resultados a alguna aplicación práctica, se decide usar un modelo de machine learning para predecir
+el nivel de la calidad del vino; haciendo la aclaración de que se estableció a una vino como de baja
+calidad si su puntuación es no superior a cinco y de alta calidad en el caso contrario.
+
+Dicho lo anterior, se hace necesario mencionar que el objetivo de esta sección no es otro que
+comparar el rendimiento de random forest clasiffiers ajustados sobre los datos de entrenamiento
+en el sistema coordenado original y en el sistema coordenado de las componentes principales.
+Ambos modelos fueron ajustados usando grid search k-fold cross validation; durante este proceso
+se midió la exactitud (proporción de clasificaciones realizadas de manera correcta) de ambos modelos para 
+posteriormente verificar la existencia o no de diferencias significativas entre la exactitud
+de estos.
+
+Cabe aclarar que se emplearon métodos no paramétricos para contrastar las hipótesis plantedas,
+a continuación se muestra el resultado de la distribución del estadístico de prueba Bootstrap.
+
+```{r MODS, echo = F}
+PCA.MOD <- read.csv("DatoscompPCA.csv")[, -c(1:2)]
+NORM.MOD <- read.csv("DatoscompNorm.csv")[, -c(1:2)]
+mean_train0 <- mean(PCA.MOD$mean_score_train) - mean(NORM.MOD$mean_score_train)
+mean_test0 <- mean(PCA.MOD$mean_score_test) - mean(NORM.MOD$mean_score_test)
+boot_mean_train <- c()
+boot_mean_test <- c()
+set.seed(314159)
+for (i in 1:2000) {
+  boot_mean_train[i] <- mean(sample(PCA.MOD$mean_score_train, 1920, replace = T)) - mean(sample(NORM.MOD$mean_score_train, 1920, replace = T))
+  boot_mean_test[i] <- mean(sample(PCA.MOD$mean_score_test, 1920, replace = T)) - mean(sample(NORM.MOD$mean_score_test, 1920, replace = T))
+}
+pvalue_train <- 2*min(mean(boot_mean_train <= mean_train0),mean(boot_mean_train >= mean_train0))
+pvalue_test <- 2*min(mean(boot_mean_test <= mean_test0),mean(boot_mean_test >= mean_test0))
+
+histboot1 <- ggplot(data.frame(x = boot_mean_train), aes(x))+
+  geom_histogram(binwidth = 0.001, col = "black", fill = "cyan")+
+  labs(x = "", y = "Frecuencia",
+       title = "Histograma para la diferencia de exactitud media en el conjunto de\nentrenamiento del k-fold cross validation")+
+  geom_segment(data = data.frame(x = c(quantile(boot_mean_train, c(0.025, 0.975)), mean_train0),
+                                 y = c(0,0,0), Clase = c("Confianza", "Confianza",
+                                                       "Estadístico de prueba")),
+               mapping = aes(x = x,
+                             xend = x,
+                             y = y, yend = c(400, 400, 400), color = Clase, linetype = Clase))+
+  scale_colour_manual(values = c("black", "red"))
+  
+histboot2 <- ggplot(data.frame(x = boot_mean_test), aes(x))+
+  geom_histogram(binwidth = 0.001, col = "black", fill = "cyan")+
+  labs(x = "", y = "Frecuencia",
+       title = "Histograma para la diferencia de exactitud media en el conjunto de\nprueba del k-fold cross validation")+
+  geom_segment(data = data.frame(x = c(quantile(boot_mean_test, c(0.025, 0.975)), mean_test0),
+                                 y = c(0,0,0), Clase = c("Confianza", "Confianza",
+                                                       "Estadístico de prueba")),
+               mapping = aes(x = x,
+                             xend = x,
+                             y = y, yend = c(400, 400, 400), color = Clase, linetype = Clase))+
+  scale_colour_manual(values = c("black", "red"))
+
+
+ggpubr::ggarrange(histboot1, histboot2, nrow = 2, ncol = 1)
+```
+
+Como se puede observar, el estadístico de prueba reside en el interior del intervalo
+de confianza Bootstrap del 95%, por lo que no se rechaza la hipótesis de que
+la exactitud media de ambos modelos es la misma.
+
+Se reportan los p-valores de dicha prueba.
+
+```{r pvals, echo = F}
+dfpvals <- data.frame(pvalor = c(pvalue_train, pvalue_test))
+rownames(dfpvals) <- c("Entrenamiento", "Prueba")
+dfpvals %>%
+  kable(row.names = T, col.names = "P-valor", align = "c",
+        booktab = T, longtable = T) %>%
+  kable_styling(position = "center")
+```
+
+Dichos p-valores son mucho mayores que el nivel de significancia usado (5%),
+lo que deja en evidencia la compatibilidad entre los datos que se obtuvieron 
+y la hipótesis de que no hay diferencias significativas en la exactitud media
+de un modelo u otro.
+
+Finalmente en esta sección se compara la exactitud, la precisión y la sensibilidad de ambos
+modelos cuando sobre conjuntos de datos que no hicieron parte de su entrenamiento.
+
+Antes de ello se definen los términos de precisión como el porcentaje de las predicciones
+realmente correctas entre todas aquellas observaciones predichas como correctas y 
+la sensibilidad como el porcentaje de predicciones que fueron hechas como correctas entre
+todas aquellas que deberían haber sido clasificadas como correctas.
+
+```{r measures, echo = F}
+dfmeasures <- data.frame(norm = c("100%", "100%", "100%"),
+                         pca = c("90.63%", "92.76%", "88.13%"))
+rownames(dfmeasures) <- c("Exactitud", "Precisión", "Sensibilidad")
+
+dfmeasures %>%
+  kable(col.names = c("Modelo completo", "Modelo componentes principales"),
+        row.names = T, align = "c", booktab = T) %>%
+  kable_styling(position = "center")
+```
+
+Como se puede observar, el modelo completo funciona a la perfección con el conjunto de datos
+de prueba, pues es un algoritmo bastante potente y la tarea para la que fue utilizado es bastante sencilla.
+Por su parte, el modelo ajustado con las componentes principales no da un mal ajuste pues
+logra predecir correctamente al rededor del 90% de las observaciones, de aquellas que predijo
+como vinos de calidad realmente el 92% fueron vinos de calidad y de todos aquellos vinos
+clasificados como de calidad identificó aproximadamente el 88%, dejando al modelo como 
+una herramienta que no solo realiza bien su tarea sino que también como una ganacia a nivel
+de coste computacional, pues su entrenamiento tarda menos tiempo debido a que se usó una menor
+cantidad de variables para ajustarlo.
+
 \section{Conclusiones}
