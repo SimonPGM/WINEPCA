@@ -43,34 +43,58 @@ library(factoextra)
 
 ```{r PCA1, echo=F}
 #Leyendo y partiendo la BD
-mnist_train <- read.csv("mnist_train_filtered.csv", header = T)
-labels <- mnist_train$Label
-data <- mnist_train[, -1]
+wine <- read.csv("winequality-red.csv", header = T)
+labels <- wine[, 12]
+data <- wine[, -12]
 
-#Leyendo el obejto PCA construido en el chunk prohibido lol
-mnist_pca <- read_rds("mnist_pca.rds")
+#Partiendo los datos para train y test
+n <- dim(data)[1]
+set.seed(123)
+train_index <- sample(1:n, floor(0.8*n))
+train_wine <- wine[train_index, ]
+test_wine <- wine[-train_index, ]
+
+#labels
+train_labels <- labels[train_index]
+test_label <- labels[-train_index]
+
+#Creando PCA
+wine_pca <- PCA(train_wine, graph = F, ncp = 8)
 
 #Valores propios del PCA
-eigen_mnist <- get_eigenvalue(mnist_pca)
+eigen_wine <- get_eigenvalue(wine_pca)
 
 #Obteniendo los individuos
-individuos <- get_pca_ind(mnist_pca)
-variables <- get_pca_var(mnist_pca)
+individuos <- get_pca_ind(wine_pca)
+variables <- get_pca_var(wine_pca)
 
 #Screeplot
-eigen_plot <- fviz_eig(mnist_pca, addlabels = T, ylim = c(0, 15))
+eigen_plot <- fviz_eig(wine_pca, addlabels = T)
 ```
+
+
+```{r PCA2, echo=F}
+
+```
+
+
 
 ```{r prohibido, echo=F, eval=F}
 #NUNCA EJECUTAR NADA EN ESTE CHUNK
 #Obteniendo PCs y valores propios respectivamente
-#mnist_pca <- PCA(data, graph = F, ncp = 154)
+#wine_pca <- PCA(data, graph = F, ncp = 154)
 
-#Guardando mnist_pca como objeto de R
-#write_rds(mnist_pca, "mnist_pca.rds")
+#Guardando wine_pca como objeto de R
+#write_rds(wine_pca, "wine_pca.rds")
 
 #Importando los individuos
-#write.csv(individuos$coord, "PCA.csv", row.names = F)
+#write.csv(individuos$coord, "PCA_train.csv", row.names = F)
+#write.csv(train_wine, "train.csv", row.names = F)
+#write.csv(matrix(train_labels, ncol = 1), 
+#          "train_labels.csv", row.names = F)
+#write.csv(test_wine, "test_wine.csv", row.names = F)
+#write.csv(matrix(test_label, ncol = 1),
+#          "test_labels.csv", row.names = F)
 
 
 ```
