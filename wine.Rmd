@@ -39,33 +39,46 @@ library(factoextra)
 
 \section{Introducción}
 
-Para dar inicio, se debe resaltar que este análisis se realiza con el propósito de mostrar la gran utilidad del PCA en múltiples aplicaciones estadísticas robustas
+El siguiente análisis se realiza con el propósito de mostrar la gran utilidad del análisis de componentes principales (PCA) en múltiples aplicaciones estadísticas robustas
 como la construcción e implementación de modelos de ML que requieren una gran cantidad de recursos computacionales. 
 
-Dicho lo anterior, en este caso se remitirá a una base de datos relacionada con variantes rojas y blancas del vino portugués "Vinho Verde", en la cual se encuentran
-diversas variables que pretenden medir la calidad del vino en cuestión desde diferentes aspectos, así como una variable respuesta u "output" que define una puntuación 
+Para el desarrollo de este análisis, se remitirá a una base de datos relacionada con variantes rojas y blancas del vino portugués "Vinho Verde" [ref-Kaggle], en la cual se encuentran
+una serie de variables que pretenden medir la calidad del vino en cuestión desde diferentes aspectos, así como una variable respuesta u "output" que define una puntuación 
 final de calidad.
 
-Las variables de entrada a las cuales se les desea realizar en análisis de componentes principales se enumeran a continuación en orden de aparición en el dataset:
+\subsection{Descripción de la base de datos}
 
-1. Acidez fija
-2. Acidez volátil
-3. Ácido cítrico
-4. Azúcar residual
-5. Cloruros
-6. Dióxido de azufre libre 
-7. Dióxido de azufre total
-8. Densidad
-9. Ph
-10. Sulfatos
-11. Alcohol 
+Se presentan las variables de entrada a las cuales se les desea realizar en análisis de componentes principales, y la variable respuesta, que no se incluye en el PCA, pero se utilizará para la creación y validación de modelos:
 
-Todas aquellas medidas en sus respectivas unidades. 
+\begin{table}[H]
+\centering
+\begin{tabular}{|>{\centering\arraybackslash}p{1cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{7cm}|>{\centering\arraybackslash}p{2.2cm}|}
+\hline
+\textbf{No} & \textbf{Nombre}         & \textbf{Nombre en BD}      & \textbf{Descripción} & \textbf{Tipo de variable} \\ \hline
+1           & Acidez fija             & fixed.acidity        & Se refiere al conjunto de los ácidos naturales procedentes de la uva (tartárico, málico, cítrico y succínico)                    & Explicativa               \\ \hline
+2           & Acidez volátil          & volatile.acidity     &  La cantidad de ácido acético en el vino, que en niveles demasiado altos puede provocar un sabor desagradable a vinagre                    & Explicativa               \\ \hline
+3           & Ácido cítrico           & citric.acid          &  Encontrado en pequeñas cantidades, el ácido cítrico puede agregar 'frescura' y sabor a los vinos.                    & Explicativa               \\ \hline
+4           & Azúcar residual         & residual.sugar       &  La cantidad de azúcar que queda después de que se detiene la fermentación, es raro encontrar vinos con menos de 1 gramo / litro                     & Explicativa               \\ \hline
+5           & Cloruros                & chlorides            &  La cantidad de sal en el vino                    & Explicativa               \\ \hline
+6           & Dióxido de azufre libre & free.sulfur.dioxide  &  La forma libre de SO2 existente en equilibrio entre el SO2 molecular (como gas disuelto) y el ion bisulfito                    & Explicativa               \\ \hline
+7           & Dióxido de azufre total & total.sulfur.dioxide &  Cantidad de formas libres y ligadas de SO2; En bajas concentraciones, el SO2 es mayormente indetectable en el vino.                    & Explicativa               \\ \hline
+8           & Densidad                & density              &   Densidad del agua, depende del alcohol y la cantidad de azúcar utilizada                  & Explicativa               \\ \hline
+9           & pH                      & pH                   & Describe qué tan ácido o básico es un vino en una escala de 0 (muy ácido) a 14 (muy básico); la mayoría de los vinos tienen entre 3 y 4                     & Explicativa               \\ \hline
+10          & Sulfatos                & sulphates            & Un aditivo para el vino que puede contribuir a los niveles de dióxido de azufre (SO2), que actúa como antimicrobiano                      & Explicativa               \\ \hline
+11          & Alcohol                 & alcohol              & El porcentaje de contenido de alcohol del vino                    & Explicativa               \\ \hline
+12          & Calidad                 & quality              & Variable de salida (basada en datos sensoriales, puntuación entre 0 y 10)                    & Respuesta                 \\ \hline
+\end{tabular}
+\end{table}
 
-La doceava variable es la respuesta anteriormente mencionada, la cual se corresponde con la puntuación final del vino en una escala de 0 a 10.
+\subsection{¿Por qué realizar un análisis por componentes principales?}
 
-Se pretende conseguir una reducción en la dimensionalidad de los datos, manteniendo la mayor cantidad de información retenida posible, para posteriormente 
-disponer de estas a la hora de crear modelos de cualquier tipo, siendo éstos últimos en cualquier efecto, lo más parsimoniosos posible.
+Se pretende conseguir una reducción en la dimensionalidad de los datos, manteniendo la mayor cantidad de información retenida posible, para posteriormente disponer de estas a la hora de crear modelos de cualquier tipo.
+
+Es claro que a la hora de crear modelos estadísticos y computacionales tales como redes neuronales, bosques aletorios, clasificadores lineales, entre otros, el gasto computacional es alto. El uso de PCA permite realizar una \textbf{reducción en el número de variables conservando un alto porcentaje en la variabilidad de la información.} Al utilizar un menor número de variables y conservar gran parte de la variabilidad, se puede disminuir el gasto computacional de los modelos sin comprometer la calidad. 
+
+Es bueno advertir que conocer qué variables aportan mayor variabilidad permitiría que un experto en el tema pueda descubrir más información sobre el mecanismo intrínseco del proceso.
+
+
 
 
 \newpage
@@ -103,6 +116,8 @@ eigen_plot <- fviz_eig(wine_pca, addlabels = T)
 ```
 
 
+Para la realización del análisis por componentes principales, se utilizó la función `PCA()` de la librería `FactoMineR`. A continuación se muestran y se comentan los resultados obtenidos.
+
 ```{r PCA2, echo=F}
 colnames(eigen_wine) <- c("Eigen valores", 
                           "Porcentaje de varianza",
@@ -113,6 +128,9 @@ rownames(eigen_wine) <- c("CP1", "CP2", "CP3", "CP4", "CP5", "CP6",
 kable(eigen_wine, escape = F, longtable = T, booktab = T)
 
 ```
+
+ 
+
 
 
 ```{r PCA3, echo=F, fig.height=9, fig.width=7, message=F}
