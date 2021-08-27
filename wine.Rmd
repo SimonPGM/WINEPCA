@@ -115,7 +115,7 @@ kable(eigen_wine, escape = F, longtable = T, booktab = T)
 ```
 
 
-```{r PCA3, echo=F, fig.height=9, fig.width=7, warning=F}
+```{r PCA3, echo=F, fig.height=9, fig.width=7, message=F}
 #Plots (Varianza acumulada y porcentaje de varianza)
 #Screeplot (Porcentaje de variabilidad)
 por_var <- fviz_eig(wine_pca)
