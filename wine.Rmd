@@ -123,14 +123,10 @@ colnames(eigen_wine) <- c("Eigen valores",
                           "Porcentaje de varianza",
                           "Porcentaje de varianza acumulada")
 rownames(eigen_wine) <- c("CP1", "CP2", "CP3", "CP4", "CP5", "CP6",
-                          "CP7", "CP8", "CP9", "CP10", "CP11",
-                          "CP12")
-kable(eigen_wine, escape = F, longtable = T, booktab = T)
+                          "CP7", "CP8", "CP9", "CP10", "CP11")
+kable(round(eigen_wine, 4), escape = F, longtable = T, booktab = T)
 
 ```
-
- 
-
 
 
 ```{r PCA3, echo=F, fig.height=9, fig.width=7, message=F}
@@ -139,12 +135,12 @@ kable(eigen_wine, escape = F, longtable = T, booktab = T)
 por_var <- fviz_eig(wine_pca)
 
 #Porcentaje acumulado
-cum_por <- ggplot(mapping = aes(x = 1:12, y = eigen_wine[, 3])) +
-  geom_line() + xlim(1,12) +
-  scale_x_continuous(breaks= 1:12) +
-  geom_segment(mapping = aes(x = c(1, 8), xend = c(8, 8),
-                             y = c(91.86098, 0), 
-                             yend = c(91.86098, 91.86098)), 
+cum_por <- ggplot(mapping = aes(x = 1:11, y = eigen_wine[, 3])) +
+  geom_line() + xlim(1,11) +
+  scale_x_continuous(breaks= 1:11) +
+  geom_segment(mapping = aes(x = c(1, 7), xend = c(7, 7),
+                             y = c(90.8761, 0), 
+                             yend = c(90.8761, 90.8761)), 
                color = "red", linetype = "dashed")
 
 por_var <- ggpubr::ggpar(por_var, title = "Porcentaje de variabilidad",
@@ -249,7 +245,7 @@ biplot <- fviz_pca_biplot(wine_pca, repel = T,
 ```{r tabla_cor, echo=F}
 #Nombres de columnas
 colnames(variables$cor) <- c("CP1", "CP2", "CP3", "CP4", 
-                             "CP5", "CP6", "CP7", "CP8")
+                             "CP5", "CP6", "CP7")
 #Mostrar tabla
 kable(round(variables$cor, 4), escape = F, longtable = T, 
       booktab = T)
@@ -259,7 +255,7 @@ kable(round(variables$cor, 4), escape = F, longtable = T,
 ```{r tabla_cos2, echo=F}
 #Nombres de columnas
 colnames(variables$cos2) <- c("CP1", "CP2", "CP3", "CP4", 
-                              "CP5", "CP6", "CP7", "CP8")
+                              "CP5", "CP6", "CP7")
 #Mostrar tabla
 kable(round(variables$cos2, 4), escape = F, longtable = T, 
       booktab = T)
@@ -268,7 +264,7 @@ kable(round(variables$cos2, 4), escape = F, longtable = T,
 ```{r tabla_contrib, echo=F}
 #Nombres de columnas
 colnames(variables$contrib) <- c("CP1", "CP2", "CP3", "CP4", 
-                                 "CP5", "CP6", "CP7", "CP8")
+                                 "CP5", "CP6", "CP7")
 #Mostrar tabla
 kable(round(variables$contrib, 4), escape = F, longtable = T, 
       booktab = T)
@@ -277,7 +273,7 @@ kable(round(variables$contrib, 4), escape = F, longtable = T,
 ```{r tabla_coord, echo=F}
 #Nombres de columnas
 colnames(variables$coord) <- c("CP1", "CP2", "CP3", "CP4", 
-                                 "CP5", "CP6", "CP7", "CP8")
+                                 "CP5", "CP6", "CP7")
 #Mostrar tabla
 kable(round(variables$coord, 4), escape = F, longtable = T, 
       booktab = T)
