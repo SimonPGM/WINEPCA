@@ -73,7 +73,19 @@ eigen_plot <- fviz_eig(wine_pca, addlabels = T)
 ```
 
 
-```{r PCA2, echo=F, fig.height=9, fig.width=7, warning=F}
+```{r PCA2, echo=F}
+colnames(eigen_wine) <- c("Eigen valores", 
+                          "Porcentaje de varianza",
+                          "Porcentaje de varianza acumulada")
+rownames(eigen_wine) <- c("CP1", "CP2", "CP3", "CP4", "CP5", "CP6",
+                          "CP7", "CP8", "CP9", "CP10", "CP11",
+                          "CP12")
+kable(eigen_wine, escape = F, longtable = T)
+
+```
+
+
+```{r PCA3, echo=F, fig.height=9, fig.width=7, warning=F}
 #Plots (Varianza acumulada y porcentaje de varianza)
 #Screeplot (Porcentaje de variabilidad)
 por_var <- fviz_eig(wine_pca)
@@ -98,6 +110,34 @@ cum_por <- ggpubr::ggpar(cum_por, title = "Variabilidad acumulada",
 ggpubr::ggarrange(por_var, cum_por, ncol = 1, nrow = 2)
 ```
 
+```{r PCA4, echo=F, fig.height=9, fig.width=7}
+#Circulos de correlacion
+cos2_circle <- fviz_pca_var(wine_pca, repel = T, 
+                            col.var = "cos2",
+                            gradient.cols = c("#00AFBB",
+                                              "#E7B800",
+                                              "#FC4E07"))
+
+contrib_circle <- fviz_pca_var(wine_pca, repel = T, 
+                            col.var = "contrib",
+                            gradient.cols = c("#00AFBB",
+                                              "#E7B800",
+                                              "#FC4E07"))
+
+#Renombrando los ejes
+cos2_circle <- ggpubr::ggpar(cos2_circle,
+                             title = "Circulo de correlación",
+                             xlab = "Componente principal 1",
+                             ylab = "Componente principal 2",
+                             legend.title = "Coseno cuadrado")
+
+contrib_circle <- ggpubr::ggpar(contrib_circle,
+                             title = "Circulo de correlación",
+                             xlab = "Componente principal 1",
+                             ylab = "Componente principal 2",
+                             legend.title = "Contribución")
+ggpubr::ggarrange(cos2_circle, contrib_circle, ncol = 1, nrow = 2)
+```
 
 
 ```{r prohibido, echo=F, eval=F}
