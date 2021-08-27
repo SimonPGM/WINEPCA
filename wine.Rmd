@@ -39,6 +39,36 @@ library(factoextra)
 
 \section{Introducción}
 
+Para dar inicio, se debe resaltar que este análisis se realiza con el propósito de mostrar la gran utilidad del PCA en múltiples aplicaciones estadísticas robustas
+como la construcción e implementación de modelos de ML que requieren una gran cantidad de recursos computacionales. 
+
+Dicho lo anterior, en este caso se remitirá a una base de datos relacionada con variantes rojas y blancas del vino portugués "Vinho Verde", en la cual se encuentran
+diversas variables que pretenden medir la calidad del vino en cuestión desde diferentes aspectos, así como una variable respuesta u "output" que define una puntuación 
+final de calidad.
+
+Las variables de entrada a las cuales se les desea realizar en análisis de componentes principales se enumeran a continuación en orden de aparición en el dataset:
+
+1. Acidez fija
+2. Acidez volátil
+3. Ácido cítrico
+4. Azúcar residual
+5. Cloruros
+6. Dióxido de azufre libre 
+7. Dióxido de azufre total
+8. Densidad
+9. Ph
+10. Sulfatos
+11. Alcohol 
+
+Todas aquellas medidas en sus respectivas unidades. 
+
+La doceava variable es la respuesta anteriormente mencionada, la cual se corresponde con la puntuación final del vino en una escala de 0 a 10.
+
+Se pretende conseguir una reducción en la dimensionalidad de los datos, manteniendo la mayor cantidad de información retenida posible, para posteriormente 
+disponer de estas a la hora de crear modelos de cualquier tipo, siendo éstos últimos en cualquier efecto, lo más parsimoniosos posible.
+
+
+\newpage
 \section{Informe técnico}
 
 ```{r PCA1, echo=F}
