@@ -39,40 +39,253 @@ library(factoextra)
 
 \section{Introducción}
 
+Para dar inicio, se debe resaltar que este análisis se realiza con el propósito de mostrar la gran utilidad del PCA en múltiples aplicaciones estadísticas robustas
+como la construcción e implementación de modelos de ML que requieren una gran cantidad de recursos computacionales. 
+
+Dicho lo anterior, en este caso se remitirá a una base de datos relacionada con variantes rojas y blancas del vino portugués "Vinho Verde", en la cual se encuentran
+diversas variables que pretenden medir la calidad del vino en cuestión desde diferentes aspectos, así como una variable respuesta u "output" que define una puntuación 
+final de calidad.
+
+Las variables de entrada a las cuales se les desea realizar en análisis de componentes principales se enumeran a continuación en orden de aparición en el dataset:
+
+1. Acidez fija
+2. Acidez volátil
+3. Ácido cítrico
+4. Azúcar residual
+5. Cloruros
+6. Dióxido de azufre libre 
+7. Dióxido de azufre total
+8. Densidad
+9. Ph
+10. Sulfatos
+11. Alcohol 
+
+Todas aquellas medidas en sus respectivas unidades. 
+
+La doceava variable es la respuesta anteriormente mencionada, la cual se corresponde con la puntuación final del vino en una escala de 0 a 10.
+
+Se pretende conseguir una reducción en la dimensionalidad de los datos, manteniendo la mayor cantidad de información retenida posible, para posteriormente 
+disponer de estas a la hora de crear modelos de cualquier tipo, siendo éstos últimos en cualquier efecto, lo más parsimoniosos posible.
+
+
+\newpage
 \section{Informe técnico}
 
 ```{r PCA1, echo=F}
 #Leyendo y partiendo la BD
-mnist_train <- read.csv("mnist_train_filtered.csv", header = T)
-labels <- mnist_train$Label
-data <- mnist_train[, -1]
+wine <- read.csv("winequality-red.csv", header = T)
+labels <- wine[, 12]
+data <- wine[, -12]
 
-#Leyendo el obejto PCA construido en el chunk prohibido lol
-mnist_pca <- read_rds("mnist_pca.rds")
+#Partiendo los datos para train y test
+n <- dim(data)[1]
+set.seed(123)
+train_index <- sample(1:n, floor(0.8*n))
+train_wine <- wine[train_index, ]
+test_wine <- wine[-train_index, ]
+
+#labels
+train_labels <- labels[train_index]
+test_label <- labels[-train_index]
+
+#Creando PCA
+wine_pca <- PCA(train_wine, graph = F, ncp = 8)
 
 #Valores propios del PCA
-eigen_mnist <- get_eigenvalue(mnist_pca)
+eigen_wine <- get_eigenvalue(wine_pca)
 
 #Obteniendo los individuos
-individuos <- get_pca_ind(mnist_pca)
-variables <- get_pca_var(mnist_pca)
+individuos <- get_pca_ind(wine_pca)
+variables <- get_pca_var(wine_pca)
 
 #Screeplot
-eigen_plot <- fviz_eig(mnist_pca, addlabels = T, ylim = c(0, 15))
+eigen_plot <- fviz_eig(wine_pca, addlabels = T)
 ```
+
+
+```{r PCA2, echo=F}
+colnames(eigen_wine) <- c("Eigen valores", 
+                          "Porcentaje de varianza",
+                          "Porcentaje de varianza acumulada")
+rownames(eigen_wine) <- c("CP1", "CP2", "CP3", "CP4", "CP5", "CP6",
+                          "CP7", "CP8", "CP9", "CP10", "CP11",
+                          "CP12")
+kable(eigen_wine, escape = F, longtable = T, booktab = T)
+
+```
+
+
+```{r PCA3, echo=F, fig.height=9, fig.width=7, warning=F}
+#Plots (Varianza acumulada y porcentaje de varianza)
+#Screeplot (Porcentaje de variabilidad)
+por_var <- fviz_eig(wine_pca)
+
+#Porcentaje acumulado
+cum_por <- ggplot(mapping = aes(x = 1:12, y = eigen_wine[, 3])) +
+  geom_line() + xlim(1,12) +
+  scale_x_continuous(breaks= 1:12) +
+  geom_segment(mapping = aes(x = c(1, 8), xend = c(8, 8),
+                             y = c(91.86098, 0), 
+                             yend = c(91.86098, 91.86098)), 
+               color = "red", linetype = "dashed")
+
+por_var <- ggpubr::ggpar(por_var, title = "Porcentaje de variabilidad",
+              xlab = "Componente principal", 
+              ylab = "Porcentaje (%)")
+
+cum_por <- ggpubr::ggpar(cum_por, title = "Variabilidad acumulada",
+              xlab = "Componente principal",
+              ylab = "Porcentaje (%)",
+              ggtheme = theme_minimal())
+ggpubr::ggarrange(por_var, cum_por, ncol = 1, nrow = 2)
+```
+
+
+```{r PCA4, echo=F}
+#Plots de variables que mas contribuyen a las PCs
+contrib_plot_pc1 <- fviz_contrib(wine_pca, choice = "var")
+contrib_plot_pc2 <- fviz_contrib(wine_pca, choice = "var", axes = 2)
+
+#Renombrando ejes y demas
+contrib_plot_pc1 <- ggpubr::ggpar(contrib_plot_pc1,
+  title = "Contribución de las variables a la\ncomponente principal 1", ylab = "Contribuciones (%)") 
+contrib_plot_pc2 <-ggpubr::ggpar(contrib_plot_pc2,
+  title = "Contribución de las variables a la\ncomponente principal 2", ylab = "Contribuciones (%)") 
+
+ggpubr::ggarrange(contrib_plot_pc1, contrib_plot_pc2,
+                  ncol = 2, nrow = 1)
+```
+
+
+```{r PCA5, echo=F, fig.height=9, fig.width=7}
+#Circulos de correlacion
+cos2_circle <- fviz_pca_var(wine_pca, repel = T, 
+                            col.var = "cos2",
+                            gradient.cols = c("#00AFBB",
+                                              "#E7B800",
+                                              "#FC4E07"))
+
+contrib_circle <- fviz_pca_var(wine_pca, repel = T, 
+                            col.var = "contrib",
+                            gradient.cols = c("#00AFBB",
+                                              "#E7B800",
+                                              "#FC4E07"))
+
+#Renombrando los ejes
+cos2_circle <- ggpubr::ggpar(cos2_circle,
+                             title = "Circulo de correlación",
+                             xlab = "Componente principal 1",
+                             ylab = "Componente principal 2",
+                             legend.title = "Coseno cuadrado")
+
+contrib_circle <- ggpubr::ggpar(contrib_circle,
+                             title = "Circulo de correlación",
+                             xlab = "Componente principal 1",
+                             ylab = "Componente principal 2",
+                             legend.title = "Contribución")
+ggpubr::ggarrange(cos2_circle, contrib_circle, ncol = 1, nrow = 2)
+```
+
+
+```{r PCA6, echo=F, fig.height=9, fig.width=7}
+#Plots para individuos
+cos2_ind <- fviz_pca_ind(wine_pca, col.ind = "cos2",
+                         gradient.cols = c("#00AFBB",
+                                           "#E7B800",
+                                           "#FC4E07"), 
+                         repel = T,
+                         select.ind = list(cos2 = 25))
+
+contrib_ind <- fviz_pca_ind(wine_pca, col.ind = "contrib",
+                            gradient.cols = c("#00AFBB",
+                                              "#E7B800",
+                                              "#FC4E07"), 
+                            repel = T,
+                            select.ind = list(contrib = 25))
+
+#Renombrando los ejes
+cos2_ind <- ggpubr::ggpar(cos2_ind,
+                             title = "Gráfico de individuos",
+                             xlab = "Componente principal 1",
+                             ylab = "Componente principal 2",
+                             legend.title = "Coseno cuadrado")
+
+contrib_ind <- ggpubr::ggpar(contrib_ind,
+                             title = "Gráfico de individuos",
+                             xlab = "Componente principal 1",
+                             ylab = "Componente principal 2",
+                             legend.title = "Contribución")
+
+ggpubr::ggarrange(cos2_ind, contrib_ind, ncol = 1, nrow = 2)
+```
+
+
+```{r PCA7, echo=F}
+#En stand by
+biplot <- fviz_pca_biplot(wine_pca, repel = T, 
+                col.var = "#2E9FDF",
+                col.ind = "#696969")
+```
+
+\newpage
+```{r tabla_cor, echo=F}
+#Nombres de columnas
+colnames(variables$cor) <- c("CP1", "CP2", "CP3", "CP4", 
+                             "CP5", "CP6", "CP7", "CP8")
+#Mostrar tabla
+kable(round(variables$cor, 4), escape = F, longtable = T, 
+      booktab = T)
+```
+
+
+```{r tabla_cos2, echo=F}
+#Nombres de columnas
+colnames(variables$cos2) <- c("CP1", "CP2", "CP3", "CP4", 
+                              "CP5", "CP6", "CP7", "CP8")
+#Mostrar tabla
+kable(round(variables$cos2, 4), escape = F, longtable = T, 
+      booktab = T)
+```
+
+```{r tabla_contrib, echo=F}
+#Nombres de columnas
+colnames(variables$contrib) <- c("CP1", "CP2", "CP3", "CP4", 
+                                 "CP5", "CP6", "CP7", "CP8")
+#Mostrar tabla
+kable(round(variables$contrib, 4), escape = F, longtable = T, 
+      booktab = T)
+```
+
+```{r tabla_coord, echo=F}
+#Nombres de columnas
+colnames(variables$coord) <- c("CP1", "CP2", "CP3", "CP4", 
+                                 "CP5", "CP6", "CP7", "CP8")
+#Mostrar tabla
+kable(round(variables$coord, 4), escape = F, longtable = T, 
+      booktab = T)
+```
+
+
 
 ```{r prohibido, echo=F, eval=F}
 #NUNCA EJECUTAR NADA EN ESTE CHUNK
 #Obteniendo PCs y valores propios respectivamente
-#mnist_pca <- PCA(data, graph = F, ncp = 154)
+#wine_pca <- PCA(data, graph = F, ncp = 154)
 
-#Guardando mnist_pca como objeto de R
-#write_rds(mnist_pca, "mnist_pca.rds")
+#Guardando wine_pca como objeto de R
+#write_rds(wine_pca, "wine_pca.rds")
 
 #Importando los individuos
-#write.csv(individuos$coord, "PCA.csv", row.names = F)
+#write.csv(individuos$coord, "PCA_train.csv", row.names = F)
+#write.csv(train_wine, "train.csv", row.names = F)
+#write.csv(matrix(train_labels, ncol = 1), 
+#          "train_labels.csv", row.names = F)
+#write.csv(test_wine, "test_wine.csv", row.names = F)
+#write.csv(matrix(test_label, ncol = 1),
+#          "test_labels.csv", row.names = F)
 
-
+#write.csv(predict(wine_pca, test_wine)$coord, "test_pca.csv", 
+#          row.names = F)
 ```
 
 \section{Ajuste de modelos y comparación}
@@ -181,7 +394,7 @@ Por su parte, el modelo ajustado con las componentes principales no da un mal aj
 logra predecir correctamente al rededor del 90% de las observaciones, de aquellas que predijo
 como vinos de calidad realmente el 92% fueron vinos de calidad y de todos aquellos vinos
 clasificados como de calidad identificó aproximadamente el 88%, dejando al modelo como 
-una herramienta que no solo realiza bien su tarea sino que también como una ganacia a nivel
+una herramienta que no solo realiza bien su tarea sino que también como una ganancia a nivel
 de coste computacional, pues su entrenamiento tarda menos tiempo debido a que se usó una menor
 cantidad de variables para ajustarlo.
 
