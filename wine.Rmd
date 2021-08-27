@@ -140,6 +140,39 @@ ggpubr::ggarrange(cos2_circle, contrib_circle, ncol = 1, nrow = 2)
 ```
 
 
+```{r PCA5, echo=F, fig.height=9, fig.width=7}
+#Plots para individuos
+cos2_ind <- fviz_pca_ind(wine_pca, col.ind = "cos2",
+                         gradient.cols = c("#00AFBB",
+                                           "#E7B800",
+                                           "#FC4E07"), 
+                         repel = T,
+                         select.ind = list(cos2 = 25))
+
+contrib_ind <- fviz_pca_ind(wine_pca, col.ind = "contrib",
+                            gradient.cols = c("#00AFBB",
+                                              "#E7B800",
+                                              "#FC4E07"), 
+                            repel = T,
+                            select.ind = list(contrib = 25))
+
+#Renombrando los ejes
+cos2_ind <- ggpubr::ggpar(cos2_ind,
+                             title = "Gráfico de individuos",
+                             xlab = "Componente principal 1",
+                             ylab = "Componente principal 2",
+                             legend.title = "Coseno cuadrado")
+
+contrib_ind <- ggpubr::ggpar(contrib_ind,
+                             title = "Gráfico de individuos",
+                             xlab = "Componente principal 1",
+                             ylab = "Componente principal 2",
+                             legend.title = "Contribución")
+
+ggpubr::ggarrange(cos2_ind, contrib_ind, ncol = 1, nrow = 2)
+```
+
+
 ```{r prohibido, echo=F, eval=F}
 #NUNCA EJECUTAR NADA EN ESTE CHUNK
 #Obteniendo PCs y valores propios respectivamente
