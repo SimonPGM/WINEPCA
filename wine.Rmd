@@ -80,7 +80,7 @@ colnames(eigen_wine) <- c("Eigen valores",
 rownames(eigen_wine) <- c("CP1", "CP2", "CP3", "CP4", "CP5", "CP6",
                           "CP7", "CP8", "CP9", "CP10", "CP11",
                           "CP12")
-kable(eigen_wine, escape = F, longtable = T)
+kable(eigen_wine, escape = F, longtable = T, booktab = T)
 
 ```
 
@@ -110,7 +110,24 @@ cum_por <- ggpubr::ggpar(cum_por, title = "Variabilidad acumulada",
 ggpubr::ggarrange(por_var, cum_por, ncol = 1, nrow = 2)
 ```
 
-```{r PCA4, echo=F, fig.height=9, fig.width=7}
+
+```{r PCA4, echo=F}
+#Plots de variables que mas contribuyen a las PCs
+contrib_plot_pc1 <- fviz_contrib(wine_pca, choice = "var")
+contrib_plot_pc2 <- fviz_contrib(wine_pca, choice = "var", axes = 2)
+
+#Renombrando ejes y demas
+contrib_plot_pc1 <- ggpubr::ggpar(contrib_plot_pc1,
+  title = "Contribución de las variables a la\ncomponente principal 1", ylab = "Contribuciones (%)") 
+contrib_plot_pc2 <-ggpubr::ggpar(contrib_plot_pc2,
+  title = "Contribución de las variables a la\ncomponente principal 2", ylab = "Contribuciones (%)") 
+
+ggpubr::ggarrange(contrib_plot_pc1, contrib_plot_pc2,
+                  ncol = 2, nrow = 1)
+```
+
+
+```{r PCA5, echo=F, fig.height=9, fig.width=7}
 #Circulos de correlacion
 cos2_circle <- fviz_pca_var(wine_pca, repel = T, 
                             col.var = "cos2",
@@ -140,7 +157,7 @@ ggpubr::ggarrange(cos2_circle, contrib_circle, ncol = 1, nrow = 2)
 ```
 
 
-```{r PCA5, echo=F, fig.height=9, fig.width=7}
+```{r PCA6, echo=F, fig.height=9, fig.width=7}
 #Plots para individuos
 cos2_ind <- fviz_pca_ind(wine_pca, col.ind = "cos2",
                          gradient.cols = c("#00AFBB",
@@ -171,6 +188,53 @@ contrib_ind <- ggpubr::ggpar(contrib_ind,
 
 ggpubr::ggarrange(cos2_ind, contrib_ind, ncol = 1, nrow = 2)
 ```
+
+
+```{r PCA7, echo=F}
+#En stand by
+biplot <- fviz_pca_biplot(wine_pca, repel = T, 
+                col.var = "#2E9FDF",
+                col.ind = "#696969")
+```
+
+\newpage
+```{r tabla_cor, echo=F}
+#Nombres de columnas
+colnames(variables$cor) <- c("CP1", "CP2", "CP3", "CP4", 
+                             "CP5", "CP6", "CP7", "CP8")
+#Mostrar tabla
+kable(round(variables$cor, 4), escape = F, longtable = T, 
+      booktab = T)
+```
+
+
+```{r tabla_cos2, echo=F}
+#Nombres de columnas
+colnames(variables$cos2) <- c("CP1", "CP2", "CP3", "CP4", 
+                              "CP5", "CP6", "CP7", "CP8")
+#Mostrar tabla
+kable(round(variables$cos2, 4), escape = F, longtable = T, 
+      booktab = T)
+```
+
+```{r tabla_contrib, echo=F}
+#Nombres de columnas
+colnames(variables$contrib) <- c("CP1", "CP2", "CP3", "CP4", 
+                                 "CP5", "CP6", "CP7", "CP8")
+#Mostrar tabla
+kable(round(variables$contrib, 4), escape = F, longtable = T, 
+      booktab = T)
+```
+
+```{r tabla_coord, echo=F}
+#Nombres de columnas
+colnames(variables$coord) <- c("CP1", "CP2", "CP3", "CP4", 
+                                 "CP5", "CP6", "CP7", "CP8")
+#Mostrar tabla
+kable(round(variables$coord, 4), escape = F, longtable = T, 
+      booktab = T)
+```
+
 
 
 ```{r prohibido, echo=F, eval=F}
