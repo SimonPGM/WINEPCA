@@ -128,6 +128,12 @@ kable(round(eigen_wine, 4), escape = F, longtable = T, booktab = T)
 
 ```
 
+En la tabla anterior, se presentan los valores propios asociados a cada una de las componentes principales. La componente principal 1, junto con la componente principal 2, explican el `r round(eigen_wine[2, 3], 2)`\% de la variación de los datos. Para explicar el `r round(eigen_wine[7, 3], 2)`\% de la variación de los datos se requieren 7 componentes principales, esto implicaría una reducción de dimensionalidad de 11 a 7, perdiendo solo aproximadamente un 10 \% de información sobre la variabilidad de los datos. 
+
+En los siguientes dos gráficos, se presenta la información previa visualmente: inicialmente se muestra el porcentaje de variabilidad que explica cada componente, ordenadas de mayor a menor. 
+
+Adicionalmente, se grafica el porcentaje de variabilidad acumulada, este último permite determinar visualmente cuántas componentes principales se requieren para explicar cierto porcentaje de variabilidad en los datos, además, permite dar una idea de cuánto es el aumento de variabilidad que se explica cuando se añade una componente principal.
+
 
 ```{r PCA3, echo=F, fig.height=9, fig.width=7, message=F}
 #Plots (Varianza acumulada y porcentaje de varianza)
@@ -154,6 +160,9 @@ cum_por <- ggpubr::ggpar(cum_por, title = "Variabilidad acumulada",
 ggpubr::ggarrange(por_var, cum_por, ncol = 1, nrow = 2)
 ```
 
+Teniendo en cuenta que, por definición, las componentes principales 1 y 2 son las que mayor variabilidad explican, se presenta la contribución de cada una de las variables a dichas componentes. Es bueno advertir que la contribución no es una medida de calidad, sino de magnitud. 
+
+Para dar un ejemplo, se puede notar que relativo a la componente principal 1, las variables acidez fija, ácido cítrico, pH y densidad, tienen una contribución mayor a la promedio. 
 
 ```{r PCA4, echo=F}
 #Plots de variables que mas contribuyen a las PCs
@@ -170,6 +179,12 @@ ggpubr::ggarrange(contrib_plot_pc1, contrib_plot_pc2,
                   ncol = 2, nrow = 1)
 ```
 
+Como se advirtió previamente, la contribución no es una medida de calidad. Por esta razón, es necesario utilizar una medida como los cosenos cuadrados. 
+
+Gráficamente, una variable que esté más cerca al círculo unitario indica mayor contribución.Análogamente, una variable que forme un ángulo más pequeño con el eje respectivo de la componente principal indica mayor calidad, en otras palabras, mientras "más pegada" esté la variable a la CP, será de mayor calidad. Esto, se traduce en que una calidad se puede considerar alta cuando el $\cos^2(\theta) \geq 0.9$.
+
+En los siguientes círculos de correlación se ilustra gráficamente ambas medidas.
+
 
 ```{r PCA5, echo=F, fig.height=9, fig.width=7}
 #Circulos de correlacion
@@ -177,7 +192,8 @@ cos2_circle <- fviz_pca_var(wine_pca, repel = T,
                             col.var = "cos2",
                             gradient.cols = c("#00AFBB",
                                               "#E7B800",
-                                              "#FC4E07"))
+                                              "#FC4E07")) 
+
 
 contrib_circle <- fviz_pca_var(wine_pca, repel = T, 
                             col.var = "contrib",
@@ -192,14 +208,37 @@ cos2_circle <- ggpubr::ggpar(cos2_circle,
                              ylab = "Componente principal 2",
                              legend.title = "Coseno cuadrado")
 
+# Anotaciones cos2
+cos2_circle_anot <- cos2_circle + 
+    annotate(
+    geom = "curve", x = 0.3, y = 0.9, xend = 0.55, yend = 1, 
+    colour = "blue",
+    curvature = -.3, arrow = arrow(length = unit(2, "mm"))
+  ) + 
+  annotate(geom = "text", x = 0.56, y = 0.9, label = "Alta contribución \n Alta calidad \n Respecto \n a la CP1", hjust = "left", size = 3) +
+  annotate(
+    geom = "curve", x = -0.4, y = 0.42, xend = -0.75, yend = 0.52, 
+    colour = "blue",
+    curvature = 0.1, arrow = arrow(length = unit(2, "mm"))
+    ) +
+  annotate(geom = "text", x = -0.51, y = 0.76, label = "Baja calidad \n respecto a \n ambas \n componentes ", hjust = "right", size = 3) + 
+  annotate(
+    geom = "curve", x = -0.75, y = -0.05, xend = -0.5, yend = -0.25, 
+    colour = "blue",
+    curvature = -.3, arrow = arrow(length = unit(2, "mm"))
+  ) +
+  annotate(geom = "text", x = -0.55, y = -0.56, label = "Alta calidad \n respecto a CP1. \n Calidad cercana \n a cero respecto a \n CP2", hjust = "center", size = 3)
+
+
 contrib_circle <- ggpubr::ggpar(contrib_circle,
                              title = "Circulo de correlación",
                              xlab = "Componente principal 1",
                              ylab = "Componente principal 2",
                              legend.title = "Contribución")
-ggpubr::ggarrange(cos2_circle, contrib_circle, ncol = 1, nrow = 2)
+ggpubr::ggarrange(cos2_circle_anot, contrib_circle, ncol = 1, nrow = 2)
 ```
 
+A continuación, se muestra el mapeo en las componentes principales 1 y 2 para los 25 individuos con mayor coseno cuadrado y con mayor contribución, respectivamente. A cada individuo se le asigna un valor en una escala de color, correspondiende a la medida en cuestión. 
 
 ```{r PCA6, echo=F, fig.height=9, fig.width=7}
 #Plots para individuos
@@ -224,15 +263,27 @@ cos2_ind <- ggpubr::ggpar(cos2_ind,
                              ylab = "Componente principal 2",
                              legend.title = "Coseno cuadrado")
 
+#Anotaciones
+cos2_ind_ano <- cos2_ind + 
+                  geom_vline(xintercept = wine_pca[["ind"]][["coord"]]["147",1], color = "red", linetype = "dotted") +
+                  geom_hline(yintercept = wine_pca[["ind"]][["coord"]]["147",2], color = "red", linetype = "dotted") +
+                  annotate(
+                    geom = "curve", 
+                    x = wine_pca[["ind"]][["coord"]]["147",1] + 0.03, 
+                    y = wine_pca[["ind"]][["coord"]]["147",2] - 0.03, xend = -2, yend = 1, 
+                    colour = "blue",
+                    curvature = -.3, arrow = arrow(length = unit(2, "mm"))
+                  ) +
+                  annotate(geom = "text", x = -2, y = 0.6, label = "Observación 147 \n en el nuevo \n sistema de \n coordenadas", hjust = "center", size = 3)
+
 contrib_ind <- ggpubr::ggpar(contrib_ind,
                              title = "Gráfico de individuos",
                              xlab = "Componente principal 1",
                              ylab = "Componente principal 2",
                              legend.title = "Contribución")
 
-ggpubr::ggarrange(cos2_ind, contrib_ind, ncol = 1, nrow = 2)
+ggpubr::ggarrange(cos2_ind_ano, contrib_ind, ncol = 1, nrow = 2)
 ```
-
 
 ```{r PCA7, echo=F}
 #En stand by
@@ -242,13 +293,18 @@ biplot <- fviz_pca_biplot(wine_pca, repel = T,
 ```
 
 \newpage
+
+En las siguientes tablas se presenta de forma numérica los resultados más relevantes para el PCA: 
+
 ```{r tabla_cor, echo=F}
 #Nombres de columnas
 colnames(variables$cor) <- c("CP1", "CP2", "CP3", "CP4", 
                              "CP5", "CP6", "CP7")
 #Mostrar tabla
 kable(round(variables$cor, 4), escape = F, longtable = T, 
-      booktab = T)
+      booktab = T, 
+      caption = "Coordenadas")  %>%
+      kable_styling(latex_options = c("hold_position", "repeat_header"))
 ```
 
 
@@ -258,7 +314,9 @@ colnames(variables$cos2) <- c("CP1", "CP2", "CP3", "CP4",
                               "CP5", "CP6", "CP7")
 #Mostrar tabla
 kable(round(variables$cos2, 4), escape = F, longtable = T, 
-      booktab = T)
+      booktab = T, 
+      caption = "Cosenos cuadrados")  %>%
+      kable_styling(latex_options = c("hold_position", "repeat_header"))
 ```
 
 ```{r tabla_contrib, echo=F}
@@ -267,7 +325,9 @@ colnames(variables$contrib) <- c("CP1", "CP2", "CP3", "CP4",
                                  "CP5", "CP6", "CP7")
 #Mostrar tabla
 kable(round(variables$contrib, 4), escape = F, longtable = T, 
-      booktab = T)
+      booktab = T, 
+      caption = "Contribuciones")  %>%
+      kable_styling(latex_options = c("hold_position", "repeat_header"))
 ```
 
 ```{r tabla_coord, echo=F}
@@ -276,7 +336,9 @@ colnames(variables$coord) <- c("CP1", "CP2", "CP3", "CP4",
                                  "CP5", "CP6", "CP7")
 #Mostrar tabla
 kable(round(variables$coord, 4), escape = F, longtable = T, 
-      booktab = T)
+      booktab = T,
+      caption = "Coordenadas")  %>%
+      kable_styling(latex_options = c("hold_position", "repeat_header"))
 ```
 
 
