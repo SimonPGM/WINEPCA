@@ -94,15 +94,15 @@ data <- wine[, -12]
 n <- dim(data)[1]
 set.seed(123)
 train_index <- sample(1:n, floor(0.8*n))
-train_wine <- wine[train_index, ]
-test_wine <- wine[-train_index, ]
+train_wine <- data[train_index, ]
+test_wine <- data[-train_index, ]
 
 #labels
 train_labels <- labels[train_index]
 test_label <- labels[-train_index]
 
 #Creando PCA
-wine_pca <- PCA(train_wine, graph = F, ncp = 8)
+wine_pca <- PCA(train_wine, graph = F, ncp = 7)
 
 #Valores propios del PCA
 eigen_wine <- get_eigenvalue(wine_pca)
@@ -294,16 +294,16 @@ kable(round(variables$coord, 4), escape = F, longtable = T,
 #write_rds(wine_pca, "wine_pca.rds")
 
 #Importando los individuos
-#write.csv(individuos$coord, "PCA_train.csv", row.names = F)
-#write.csv(train_wine, "train.csv", row.names = F)
-#write.csv(matrix(train_labels, ncol = 1), 
-#          "train_labels.csv", row.names = F)
-#write.csv(test_wine, "test_wine.csv", row.names = F)
-#write.csv(matrix(test_label, ncol = 1),
-#          "test_labels.csv", row.names = F)
-
-#write.csv(predict(wine_pca, test_wine)$coord, "test_pca.csv", 
-#          row.names = F)
+# write.csv(individuos$coord, "PCA_train.csv", row.names = F)
+# write.csv(train_wine, "train.csv", row.names = F)
+# write.csv(matrix(train_labels, ncol = 1), 
+#           "train_labels.csv", row.names = F)
+# write.csv(test_wine, "test_wine.csv", row.names = F)
+# write.csv(matrix(test_label, ncol = 1),
+#           "test_labels.csv", row.names = F)
+# 
+# write.csv(predict(wine_pca, test_wine)$coord, "test_pca.csv", 
+#           row.names = F)
 ```
 
 \section{Ajuste de modelos y comparación}
