@@ -284,7 +284,8 @@ kable(round(variables$coord, 4), escape = F, longtable = T,
 #write.csv(matrix(test_label, ncol = 1),
 #          "test_labels.csv", row.names = F)
 
-
+#write.csv(predict(wine_pca, test_wine)$coord, "test_pca.csv", 
+#          row.names = F)
 ```
 
 \section{Ajuste de modelos y comparación}
