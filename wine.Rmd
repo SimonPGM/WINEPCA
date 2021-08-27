@@ -73,8 +73,29 @@ eigen_plot <- fviz_eig(wine_pca, addlabels = T)
 ```
 
 
-```{r PCA2, echo=F}
+```{r PCA2, echo=F, fig.height=9, fig.width=7, warning=F}
+#Plots (Varianza acumulada y porcentaje de varianza)
+#Screeplot (Porcentaje de variabilidad)
+por_var <- fviz_eig(wine_pca)
 
+#Porcentaje acumulado
+cum_por <- ggplot(mapping = aes(x = 1:12, y = eigen_wine[, 3])) +
+  geom_line() + xlim(1,12) +
+  scale_x_continuous(breaks= 1:12) +
+  geom_segment(mapping = aes(x = c(1, 8), xend = c(8, 8),
+                             y = c(91.86098, 0), 
+                             yend = c(91.86098, 91.86098)), 
+               color = "red", linetype = "dashed")
+
+por_var <- ggpubr::ggpar(por_var, title = "Porcentaje de variabilidad",
+              xlab = "Componente principal", 
+              ylab = "Porcentaje (%)")
+
+cum_por <- ggpubr::ggpar(cum_por, title = "Variabilidad acumulada",
+              xlab = "Componente principal",
+              ylab = "Porcentaje (%)",
+              ggtheme = theme_minimal())
+ggpubr::ggarrange(por_var, cum_por, ncol = 1, nrow = 2)
 ```
 
 
