@@ -366,25 +366,33 @@ kable(round(variables$coord, 4), escape = F, longtable = T,
 
 \section{Ajuste de modelos y comparación}
 
-Puesto que carece de sentido alguno realizar análisis de componentes principales sin llevar los
-resultados a alguna aplicación práctica, se decide usar un modelo de machine learning para predecir
-el nivel de la calidad del vino; haciendo la aclaración de que se estableció a una vino como de baja
-calidad si su puntuación es no superior a cinco y de alta calidad en el caso contrario.
+Puesto que carece de sentido alguno realizar análisis de componentes principales 
+sin llevar los resultados a alguna aplicación práctica, se decide usar un modelo 
+de machine learning para predecir el nivel de la calidad del vino. Esto
+se realiza a través de separar los datos en conjuntos de entrenamiento y prueba,
+tanto en los datos en su espacio original como los transformados a través del
+análisis de componentes principales para ajustar un modelo en cada espacio
+con su respectivo conjunto de entrenamiento.
 
-Dicho lo anterior, se hace necesario mencionar que el objetivo de esta sección no es otro que
-comparar el rendimiento de random forest clasiffiers ajustados sobre los datos de entrenamiento
-en el sistema coordenado original y en el sistema coordenado de las componentes principales.
-Ambos modelos fueron ajustados usando grid search k-fold cross validation; durante este proceso
-se midió la exactitud (proporción de clasificaciones realizadas de manera correcta) de ambos modelos para 
-posteriormente verificar la existencia o no de diferencias significativas entre la exactitud
-de estos.
+Dicho lo anterior, se hace necesario mencionar que el objetivo de esta sección no
+es otro que comparar el rendimiento de los modelos de regresión de bosque 
+aleatorio ajustados sobre los datos de entrenamiento en el sistema coordenado 
+original y en el sistema coordenado de las componentes principales.
 
-Cabe aclarar que se emplearon métodos no paramétricos para contrastar las hipótesis plantedas,
-a continuación se muestra el resultado de la distribución del estadístico de prueba Bootstrap.
+Ambos modelos fueron ajustados usando grid search k-fold cross validation; durante
+este proceso se tomaron medidas de la raíz del error cuadrático medio (RMSE) de 
+ambos modelos para posteriormente verificar la existencia o no de diferencias 
+significativas entre la exactitud de estos.
+
+Cabe aclarar que se emplearon métodos no paramétricos para contrastar las hipótesis plantedas, además, dado que se realización k-fold cross validation se
+tienen valores del RMSE para conjuntos de entrenamiento y prueba gracias
+a la naturaleza del proceso de validación utilizado.
+
+A continuación se muestra el resultado de la distribución del estadístico de prueba Bootstrap.
 
 ```{r MODS, echo = F}
-PCA.MOD <- read.csv("DatoscompPCA.csv")[, -c(1:2)]
-NORM.MOD <- read.csv("DatoscompNorm.csv")[, -c(1:2)]
+PCA.MOD <- read.csv("DatoscompPCA.csv")[, -1]
+NORM.MOD <- read.csv("DatoscompNorm.csv")[, -1]
 mean_train0 <- mean(PCA.MOD$mean_score_train) - mean(NORM.MOD$mean_score_train)
 mean_test0 <- mean(PCA.MOD$mean_score_test) - mean(NORM.MOD$mean_score_test)
 boot_mean_train <- c()
@@ -398,7 +406,7 @@ pvalue_train <- 2*min(mean(boot_mean_train <= mean_train0),mean(boot_mean_train 
 pvalue_test <- 2*min(mean(boot_mean_test <= mean_test0),mean(boot_mean_test >= mean_test0))
 
 histboot1 <- ggplot(data.frame(x = boot_mean_train), aes(x))+
-  geom_histogram(binwidth = 0.001, col = "black", fill = "cyan")+
+  geom_histogram(binwidth = 5e-4, col = "black", fill = "cyan")+
   labs(x = "", y = "Frecuencia",
        title = "Histograma para la diferencia de exactitud media en el conjunto de\nentrenamiento del k-fold cross validation")+
   geom_segment(data = data.frame(x = c(quantile(boot_mean_train, c(0.025, 0.975)), mean_train0),
@@ -406,11 +414,11 @@ histboot1 <- ggplot(data.frame(x = boot_mean_train), aes(x))+
                                                        "Estadístico de prueba")),
                mapping = aes(x = x,
                              xend = x,
-                             y = y, yend = c(400, 400, 400), color = Clase, linetype = Clase))+
+                             y = y, yend = c(600, 600, 600), color = Clase, linetype = Clase))+
   scale_colour_manual(values = c("black", "red"))
   
 histboot2 <- ggplot(data.frame(x = boot_mean_test), aes(x))+
-  geom_histogram(binwidth = 0.001, col = "black", fill = "cyan")+
+  geom_histogram(binwidth = 5e-4, col = "black", fill = "cyan")+
   labs(x = "", y = "Frecuencia",
        title = "Histograma para la diferencia de exactitud media en el conjunto de\nprueba del k-fold cross validation")+
   geom_segment(data = data.frame(x = c(quantile(boot_mean_test, c(0.025, 0.975)), mean_test0),
@@ -418,16 +426,16 @@ histboot2 <- ggplot(data.frame(x = boot_mean_test), aes(x))+
                                                        "Estadístico de prueba")),
                mapping = aes(x = x,
                              xend = x,
-                             y = y, yend = c(400, 400, 400), color = Clase, linetype = Clase))+
+                             y = y, yend = c(600, 600, 600), color = Clase, linetype = Clase))+
   scale_colour_manual(values = c("black", "red"))
 
 
 ggpubr::ggarrange(histboot1, histboot2, nrow = 2, ncol = 1)
 ```
 
-Como se puede observar, el estadístico de prueba reside en el interior del intervalo
-de confianza Bootstrap del 95%, por lo que no se rechaza la hipótesis de que
-la exactitud media de ambos modelos es la misma.
+Como se puede observar, el estadístico de prueba reside en el interior del
+intervalo de confianza Bootstrap del 95%, por lo que no se rechaza la hipótesis de
+que la exactitud media de ambos modelos es la misma.
 
 Se reportan los p-valores de dicha prueba.
 
@@ -443,35 +451,41 @@ dfpvals %>%
 Dichos p-valores son mucho mayores que el nivel de significancia usado (5%),
 lo que deja en evidencia la compatibilidad entre los datos que se obtuvieron 
 y la hipótesis de que no hay diferencias significativas en la exactitud media
-de un modelo u otro.
+de un modelo u otro. De hecho, el hecho de que los p-valores resulten
+tan cercano a 1 evidencia una fuerte concordancia entre la igualdad de las medias
+de la distribución Bootstrap del estadístico de prueba.
 
-Finalmente en esta sección se compara la exactitud, la precisión y la sensibilidad de ambos
-modelos cuando sobre conjuntos de datos que no hicieron parte de su entrenamiento.
-
-Antes de ello se definen los términos de precisión como el porcentaje de las predicciones
-realmente correctas entre todas aquellas observaciones predichas como correctas y 
-la sensibilidad como el porcentaje de predicciones que fueron hechas como correctas entre
-todas aquellas que deberían haber sido clasificadas como correctas.
+Finalmente en esta sección se comparan ambos modelos cuando predicen sobre conjuntos de datos que no hicieron parte de su entrenamiento. Para esto se
+toman la raíz del error cuadrático medio (RMSE), la desviación absoluta de 
+la media (MAE) y la desviación absoluta porcentual de la media (MAPE).
 
 ```{r measures, echo = F}
-dfmeasures <- data.frame(norm = c("100%", "100%", "100%"),
-                         pca = c("90.63%", "92.76%", "88.13%"))
-rownames(dfmeasures) <- c("Exactitud", "Precisión", "Sensibilidad")
+dfmeasures <- read.csv("Compfinal.csv", row.names = 1)
 
-dfmeasures %>%
-  kable(col.names = c("Modelo completo", "Modelo componentes principales"),
+dfmeasures %>% round(4) %>%
+  mutate(Porcentaje_de_error = paste(as.character(Porcentaje_de_error), "%",
+                                     sep = "")) %>%
+  kable(col.names = c("Modelo completo",
+                      "Modelo componentes principales",
+                      "Porcentaje de error"),
         row.names = T, align = "c", booktab = T) %>%
   kable_styling(position = "center")
 ```
 
-Como se puede observar, el modelo completo funciona a la perfección con el conjunto de datos
-de prueba, pues es un algoritmo bastante potente y la tarea para la que fue utilizado es bastante sencilla.
-Por su parte, el modelo ajustado con las componentes principales no da un mal ajuste pues
-logra predecir correctamente al rededor del 90% de las observaciones, de aquellas que predijo
-como vinos de calidad realmente el 92% fueron vinos de calidad y de todos aquellos vinos
-clasificados como de calidad identificó aproximadamente el 88%, dejando al modelo como 
-una herramienta que no solo realiza bien su tarea sino que también como una ganancia a nivel
-de coste computacional, pues su entrenamiento tarda menos tiempo debido a que se usó una menor
-cantidad de variables para ajustarlo.
+Como se puede observar, el modelo completo obtiene valores más pequeños
+en las medidas anteriormente descritas cuando predice sobre el conjunto de prueba, sin embargo el modelo ajustado usando los datos de prueba llevados al espacio
+de las componentes principales también obtiene medidas muy bajas, de hecho
+en todas ellas posee un error relativo porcentual no mayor a 6.4% por lo que
+presenta un rendimiento muy similar al modelo original.
 
+Así que al considerar las conclusiones de la prueba Bootstrap (no existen
+diferencias significativas entre los rendimientos del modelo al predecir)
+y la tabla, se puede aseverar con total tranquilidad que el modelo ajustado
+con los datos en el espacio de las componentes principales es igual de bueno
+que el ajustado sobre los datos en su espacio original a pesar
+de que el primero contenía un conjunto que explicaba el 90% de la variabilidad
+total del conjunto original. Adicionalmente se tiene una ganancia a nivel de coste
+computacional pues al tener menos columnas, el número de operaciones
+que debe realizar el software para ajustar modelos es menor y por ende esto
+desemboca en un proceso más rápido yeficiente.
 \section{Conclusiones}
