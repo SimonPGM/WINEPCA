@@ -42,7 +42,7 @@ library(factoextra)
 El siguiente análisis se realiza con el propósito de mostrar la gran utilidad del análisis de componentes principales (PCA) en múltiples aplicaciones estadísticas robustas
 como la construcción e implementación de modelos de ML que requieren una gran cantidad de recursos computacionales. 
 
-Para el desarrollo de este análisis, se remitirá a una base de datos relacionada con variantes rojas y blancas del vino portugués "Vinho Verde" [ref-Kaggle], en la cual se encuentran
+Para el desarrollo de este análisis, se remitirá a una base de datos relacionada con variantes rojas y blancas del vino portugués "Vinho Verde" \cite{kaggle-bd}, en la cual se encuentran
 una serie de variables que pretenden medir la calidad del vino en cuestión desde diferentes aspectos, así como una variable respuesta u "output" que define una puntuación 
 final de calidad.
 
@@ -55,7 +55,7 @@ Se presentan las variables de entrada a las cuales se les desea realizar en aná
 \begin{tabular}{|>{\centering\arraybackslash}p{1cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{7cm}|>{\centering\arraybackslash}p{2.2cm}|}
 \hline
 \textbf{No} & \textbf{Nombre}         & \textbf{Nombre en BD}      & \textbf{Descripción} & \textbf{Tipo de variable} \\ \hline
-1           & Acidez fija             & fixed.acidity        & Se refiere al conjunto de los ácidos naturales procedentes de la uva (tartárico, málico, cítrico y succínico)                    & Explicativa               \\ \hline
+1           & Acidez fija             & fixed.acidity        & Se refiere al conjunto de los ácidos naturales procedentes de la uva (tartárico, málico, cítrico y succínico) \cite{vino1}                   & Explicativa               \\ \hline
 2           & Acidez volátil          & volatile.acidity     &  La cantidad de ácido acético en el vino, que en niveles demasiado altos puede provocar un sabor desagradable a vinagre                    & Explicativa               \\ \hline
 3           & Ácido cítrico           & citric.acid          &  Encontrado en pequeñas cantidades, el ácido cítrico puede agregar 'frescura' y sabor a los vinos.                    & Explicativa               \\ \hline
 4           & Azúcar residual         & residual.sugar       &  La cantidad de azúcar que queda después de que se detiene la fermentación, es raro encontrar vinos con menos de 1 gramo / litro                     & Explicativa               \\ \hline
@@ -489,3 +489,6 @@ computacional pues al tener menos columnas, el número de operaciones
 que debe realizar el software para ajustar modelos es menor y por ende esto
 desemboca en un proceso más rápido yeficiente.
 \section{Conclusiones}
+
+\bibliographystyle{ieeetr}
+\bibliography{bibliografia}
