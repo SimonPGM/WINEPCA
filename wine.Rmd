@@ -217,7 +217,7 @@ cos2_circle_anot <- cos2_circle +
     colour = "blue",
     curvature = -.3, arrow = arrow(length = unit(2, "mm"))
   ) + 
-  annotate(geom = "text", x = 0.56, y = 0.9, label = "Alta contribución \n Alta calidad \n Respecto \n a la CP1", hjust = "left", size = 3) +
+  annotate(geom = "text", x = 0.56, y = 0.9, label = "Alta contribución \n Alta calidad \n Respecto \n a la CP2", hjust = "left", size = 3) +
   annotate(
     geom = "curve", x = -0.4, y = 0.42, xend = -0.75, yend = 0.52, 
     colour = "blue",
@@ -495,5 +495,14 @@ que debe realizar el software para ajustar modelos es menor y por ende esto
 desemboca en un proceso más rápido y eficiente.
 \section{Conclusiones}
 
+\begin{itemize}
+\item En primer lugar se tiene una alta influencia de las variables relacionadas con la acidez a la hora de explicar la componente principal 1, dichas variables se encuentran correlacionadas  de manera fuerte con el pH, el cual es una medida de acidez. 
+
+\item El pH es la variable con mejor calidad al momento de explicar la componente principal 1 porque es la que forma un angulo más pequeño con dicho eje, seguida de las variables de acidez; complementando lo descrito anteriormente.
+
+\item Las variables relacionadas con dioxido de sulfuro explican son las que explican de mejor manera la componente principal 2, adicionalmente son aquellas con mejor calidad de representación en dicha componente porque el ángulo que forman con dicho eje es pequeño. Además están altamente correlacionadas.
+
+\item 
+\end{itemize}
 \bibliographystyle{ieeetr}
 \bibliography{bibliografia}
