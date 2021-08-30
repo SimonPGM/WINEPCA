@@ -39,16 +39,18 @@ library(factoextra)
 
 \section{Introducción}
 
-El siguiente análisis se realiza con el propósito de mostrar la gran utilidad del análisis de componentes principales (PCA) en múltiples aplicaciones estadísticas robustas
-como la construcción e implementación de modelos de ML que requieren una gran cantidad de recursos computacionales. 
+El siguiente análisis se realiza con el propósito de mostrar la gran utilidad del análisis de componentes principales (PCA) en múltiples aplicaciones estadísticas robustas,
+como la construcción e implementación de modelos de machine learning que requieren una gran cantidad de recursos computacionales. 
 
 Para el desarrollo de este análisis, se remitirá a una base de datos relacionada con variantes rojas y blancas del vino portugués "Vinho Verde" \cite{kaggle-bd}, en la cual se encuentran
 una serie de variables que pretenden medir la calidad del vino en cuestión desde diferentes aspectos, así como una variable respuesta u "output" que define una puntuación 
 final de calidad.
 
+\newpage
+
 \subsection{Descripción de la base de datos}
 
-Se presentan las variables de entrada a las cuales se les desea realizar en análisis de componentes principales, y la variable respuesta, que no se incluye en el PCA, pero se utilizará para la creación y validación de modelos:
+Se presentan las variables de entrada a las cuales se les desea realizar el análisis de componentes principales, y la variable respuesta, que no se incluye en el PCA, pero se utilizará para la creación y validación de modelos:
 
 \begin{table}[H]
 \centering
@@ -74,7 +76,7 @@ Se presentan las variables de entrada a las cuales se les desea realizar en aná
 
 Se pretende conseguir una reducción en la dimensionalidad de los datos, manteniendo la mayor cantidad de información retenida posible, para posteriormente disponer de estas a la hora de crear modelos de cualquier tipo.
 
-Es claro que a la hora de crear modelos estadísticos y computacionales tales como redes neuronales, bosques aletorios, clasificadores lineales, entre otros, el gasto computacional es alto. El uso de PCA permite realizar una \textbf{reducción en el número de variables conservando un alto porcentaje en la variabilidad de la información.} Al utilizar un menor número de variables y conservar gran parte de la variabilidad, se puede disminuir el gasto computacional de los modelos sin comprometer la calidad. 
+Es claro que a la hora de crear modelos estadísticos y computacionales tales como redes neuronales, bosques aleatorios, clasificadores lineales, entre otros, el gasto computacional es alto. El uso de PCA permite realizar una \textbf{reducción en el número de variables conservando un alto porcentaje de la variabilidad de la información.} Al utilizar un menor número de variables y conservar gran parte de la variabilidad, se puede disminuir el gasto computacional de los modelos sin comprometer la calidad de los mismos. 
 
 Es bueno advertir que conocer qué variables aportan mayor variabilidad permitiría que un experto en el tema pueda descubrir más información sobre el mecanismo intrínseco del proceso.
 
@@ -130,7 +132,7 @@ kable(round(eigen_wine, 4), escape = F, longtable = T, booktab = T)
 
 En la tabla anterior, se presentan los valores propios asociados a cada una de las componentes principales. La componente principal 1, junto con la componente principal 2, explican el `r round(eigen_wine[2, 3], 2)`\% de la variación de los datos. Para explicar el `r round(eigen_wine[7, 3], 2)`\% de la variación de los datos se requieren 7 componentes principales, esto implicaría una reducción de dimensionalidad de 11 a 7, perdiendo solo aproximadamente un 10 \% de información sobre la variabilidad de los datos. 
 
-En los siguientes dos gráficos, se presenta la información previa visualmente: inicialmente se muestra el porcentaje de variabilidad que explica cada componente, ordenadas de mayor a menor. 
+En los siguientes dos gráficos, se presenta la información previa visualmente: inicialmente se muestra el porcentaje de variabilidad que explica cada componente, ordenado de mayor a menor. 
 
 Adicionalmente, se grafica el porcentaje de variabilidad acumulada, este último permite determinar visualmente cuántas componentes principales se requieren para explicar cierto porcentaje de variabilidad en los datos, además, permite dar una idea de cuánto es el aumento de variabilidad que se explica cuando se añade una componente principal.
 
@@ -181,7 +183,7 @@ ggpubr::ggarrange(contrib_plot_pc1, contrib_plot_pc2,
 
 Como se advirtió previamente, la contribución no es una medida de calidad. Por esta razón, es necesario utilizar una medida como los cosenos cuadrados. 
 
-Gráficamente, una variable que esté más cerca al círculo unitario indica mayor contribución.Análogamente, una variable que forme un ángulo más pequeño con el eje respectivo de la componente principal indica mayor calidad, en otras palabras, mientras "más pegada" esté la variable a la CP, será de mayor calidad. Esto, se traduce en que una calidad se puede considerar alta cuando el $\cos^2(\theta) \geq 0.9$.
+Gráficamente, una variable que esté más cerca al círculo unitario indica mayor contribución. Análogamente, una variable que forme un ángulo más pequeño con el eje respectivo de la componente principal indica mayor calidad. Esto, se traduce en que una calidad se puede considerar alta cuando el $\cos^2(\theta) \geq 0.9$.
 
 En los siguientes círculos de correlación se ilustra gráficamente ambas medidas.
 
@@ -240,7 +242,7 @@ ggpubr::ggarrange(cos2_circle_anot, contrib_circle, ncol = 1, nrow = 2)
 
 A continuación, se muestra el mapeo en las componentes principales 1 y 2 para los 25 individuos con mayor coseno cuadrado y con mayor contribución, respectivamente. A cada individuo se le asigna un valor en una escala de color, correspondiende a la medida en cuestión. 
 
-```{r PCA6, echo=F, fig.height=9, fig.width=7}
+```{r PCA6, echo=F}
 #Plots para individuos
 cos2_ind <- fviz_pca_ind(wine_pca, col.ind = "cos2",
                          gradient.cols = c("#00AFBB",
@@ -282,7 +284,9 @@ contrib_ind <- ggpubr::ggpar(contrib_ind,
                              ylab = "Componente principal 2",
                              legend.title = "Contribución")
 
-ggpubr::ggarrange(cos2_ind_ano, contrib_ind, ncol = 1, nrow = 2)
+#ggpubr::ggarrange(cos2_ind_ano, contrib_ind, ncol = 1, nrow = 2)
+cos2_ind_ano
+contrib_ind
 ```
 
 ```{r PCA7, echo=F}
@@ -291,8 +295,6 @@ biplot <- fviz_pca_biplot(wine_pca, repel = T,
                 col.var = "#2E9FDF",
                 col.ind = "#696969")
 ```
-
-\newpage
 
 En las siguientes tablas se presenta de forma numérica los resultados más relevantes para el PCA: 
 
@@ -330,6 +332,8 @@ kable(round(variables$contrib, 4), escape = F, longtable = T,
       kable_styling(latex_options = c("hold_position", "repeat_header"))
 ```
 
+\newpage
+
 ```{r tabla_coord, echo=F}
 #Nombres de columnas
 colnames(variables$coord) <- c("CP1", "CP2", "CP3", "CP4", 
@@ -340,8 +344,6 @@ kable(round(variables$coord, 4), escape = F, longtable = T,
       caption = "Coordenadas")  %>%
       kable_styling(latex_options = c("hold_position", "repeat_header"))
 ```
-
-
 
 ```{r prohibido, echo=F, eval=F}
 #NUNCA EJECUTAR NADA EN ESTE CHUNK
@@ -382,9 +384,9 @@ original y en el sistema coordenado de las componentes principales.
 Ambos modelos fueron ajustados usando grid search k-fold cross validation; durante
 este proceso se tomaron medidas de la raíz del error cuadrático medio (RMSE) de 
 ambos modelos para posteriormente verificar la existencia o no de diferencias 
-significativas entre la exactitud de estos.
+significativas entre el RMSE de estos.
 
-Cabe aclarar que se emplearon métodos no paramétricos para contrastar las hipótesis plantedas, además, dado que se realización k-fold cross validation se
+Cabe aclarar que se emplearon métodos no paramétricos para contrastar las hipótesis plantedas, además, dado que se realizó k-fold cross validation, se
 tienen valores del RMSE para conjuntos de entrenamiento y prueba gracias
 a la naturaleza del proceso de validación utilizado.
 
@@ -408,7 +410,7 @@ pvalue_test <- 2*min(mean(boot_mean_test <= mean_test0),mean(boot_mean_test >= m
 histboot1 <- ggplot(data.frame(x = boot_mean_train), aes(x))+
   geom_histogram(binwidth = 5e-4, col = "black", fill = "cyan")+
   labs(x = "", y = "Frecuencia",
-       title = "Histograma para la diferencia de exactitud media en el conjunto de\nentrenamiento del k-fold cross validation")+
+       title = "Histograma para la diferencia del RMSE medio en el conjunto de\nentrenamiento del k-fold cross validation")+
   geom_segment(data = data.frame(x = c(quantile(boot_mean_train, c(0.025, 0.975)), mean_train0),
                                  y = c(0,0,0), Clase = c("Confianza", "Confianza",
                                                        "Estadístico de prueba")),
@@ -420,7 +422,7 @@ histboot1 <- ggplot(data.frame(x = boot_mean_train), aes(x))+
 histboot2 <- ggplot(data.frame(x = boot_mean_test), aes(x))+
   geom_histogram(binwidth = 5e-4, col = "black", fill = "cyan")+
   labs(x = "", y = "Frecuencia",
-       title = "Histograma para la diferencia de exactitud media en el conjunto de\nprueba del k-fold cross validation")+
+       title = "Histograma para la diferencia del RMSE medio en el conjunto de\nprueba del k-fold cross validation")+
   geom_segment(data = data.frame(x = c(quantile(boot_mean_test, c(0.025, 0.975)), mean_test0),
                                  y = c(0,0,0), Clase = c("Confianza", "Confianza",
                                                        "Estadístico de prueba")),
@@ -435,7 +437,7 @@ ggpubr::ggarrange(histboot1, histboot2, nrow = 2, ncol = 1)
 
 Como se puede observar, el estadístico de prueba reside en el interior del
 intervalo de confianza Bootstrap del 95%, por lo que no se rechaza la hipótesis de
-que la exactitud media de ambos modelos es la misma.
+que el RMSE  media de ambos modelos es el mismo para el conjunto de entrenamiento.
 
 Se reportan los p-valores de dicha prueba.
 
@@ -450,14 +452,16 @@ dfpvals %>%
 
 Dichos p-valores son mucho mayores que el nivel de significancia usado (5%),
 lo que deja en evidencia la compatibilidad entre los datos que se obtuvieron 
-y la hipótesis de que no hay diferencias significativas en la exactitud media
+y la hipótesis de que no hay diferencias significativas en el RMSE medio
 de un modelo u otro. De hecho, el hecho de que los p-valores resulten
-tan cercano a 1 evidencia una fuerte concordancia entre la igualdad de las medias
+tan cercanos a 1 evidencia una fuerte concordancia entre la igualdad de las medias
 de la distribución Bootstrap del estadístico de prueba.
 
 Finalmente en esta sección se comparan ambos modelos cuando predicen sobre conjuntos de datos que no hicieron parte de su entrenamiento. Para esto se
 toman la raíz del error cuadrático medio (RMSE), la desviación absoluta de 
 la media (MAE) y la desviación absoluta porcentual de la media (MAPE).
+
+\newpage
 
 ```{r measures, echo = F}
 dfmeasures <- read.csv("Compfinal.csv", row.names = 1)
@@ -468,14 +472,15 @@ dfmeasures %>% round(4) %>%
   kable(col.names = c("Modelo completo",
                       "Modelo componentes principales",
                       "Porcentaje de error"),
-        row.names = T, align = "c", booktab = T) %>%
+        row.names = T, align = "c", booktab = T,
+        longtable = T) %>%
   kable_styling(position = "center")
 ```
 
 Como se puede observar, el modelo completo obtiene valores más pequeños
 en las medidas anteriormente descritas cuando predice sobre el conjunto de prueba, sin embargo el modelo ajustado usando los datos de prueba llevados al espacio
 de las componentes principales también obtiene medidas muy bajas, de hecho
-en todas ellas posee un error relativo porcentual no mayor a 6.4% por lo que
+en todas ellas posee un error relativo porcentual no mayor a 6.4%, por lo que
 presenta un rendimiento muy similar al modelo original.
 
 Así que al considerar las conclusiones de la prueba Bootstrap (no existen
@@ -487,7 +492,7 @@ de que el primero contenía un conjunto que explicaba el 90% de la variabilidad
 total del conjunto original. Adicionalmente se tiene una ganancia a nivel de coste
 computacional pues al tener menos columnas, el número de operaciones
 que debe realizar el software para ajustar modelos es menor y por ende esto
-desemboca en un proceso más rápido yeficiente.
+desemboca en un proceso más rápido y eficiente.
 \section{Conclusiones}
 
 \bibliographystyle{ieeetr}
