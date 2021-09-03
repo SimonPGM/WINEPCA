@@ -168,8 +168,10 @@ Para dar un ejemplo, se puede notar que relativo a la componente principal 1, la
 
 ```{r PCA4, echo=F}
 #Plots de variables que mas contribuyen a las PCs
-contrib_plot_pc1 <- fviz_contrib(wine_pca, choice = "var")
-contrib_plot_pc2 <- fviz_contrib(wine_pca, choice = "var", axes = 2)
+contrib_plot_pc1 <- fviz_contrib(wine_pca, choice = "var",
+                                 top = 11)
+contrib_plot_pc2 <- fviz_contrib(wine_pca, choice = "var", axes = 2,
+                                 top = 11)
 
 #Renombrando ejes y demas
 contrib_plot_pc1 <- ggpubr::ggpar(contrib_plot_pc1,
@@ -185,7 +187,14 @@ Como se advirtió previamente, la contribución no es una medida de calidad. Por
 
 Gráficamente, una variable que esté más cerca al círculo unitario indica mayor contribución. Análogamente, una variable que forme un ángulo más pequeño con el eje respectivo de la componente principal indica mayor calidad. Esto, se traduce en que una calidad se puede considerar alta cuando el $\cos^2(\theta) \geq 0.9$.
 
-En los siguientes círculos de correlación se ilustra gráficamente ambas medidas.
+Haciendo uso de otra herramienta para resaltar las variables que más contribuyen a cada dimensión, se tiene el siguiente gráfico de correlación entre las variables y las componentes principales.
+
+```{r CorrplotContrib, echo=F, fig.align=T}
+corrplot::corrplot(variables$cor, is.corr = F, outline = T, 
+                   tl.col = "black")
+```
+
+En los siguientes círculos de correlación se ilustra gráficamente las contribuciones y los cosenos cuadrados.
 
 
 ```{r PCA5, echo=F, fig.height=9, fig.width=7}
