@@ -140,7 +140,7 @@ Adicionalmente, se grafica el porcentaje de variabilidad acumulada, este último
 ```{r PCA3, echo=F, fig.height=9, fig.width=7, message=F}
 #Plots (Varianza acumulada y porcentaje de varianza)
 #Screeplot (Porcentaje de variabilidad)
-por_var <- fviz_eig(wine_pca)
+por_var <- fviz_eig(wine_pca, addlabels = T, xlim = c(1, 11))
 
 #Porcentaje acumulado
 cum_por <- ggplot(mapping = aes(x = 1:11, y = eigen_wine[, 3])) +
@@ -496,17 +496,16 @@ desemboca en un proceso más rápido y eficiente.
 \section{Conclusiones}
 
 \begin{itemize}
-\item Concretizando, como se vio en el apartado del informe técnico, fueron necesarias 7 covariables para explicar el 90.88% de la variación de los datos, por lo cual, se obtiene una reducción considerable en la dimensionalidad del sistema, resultado deseable para el propósito de este proyecto. 
+\item Concretizando, como se vio en el apartado del informe técnico, fueron necesarias 7 covariables para explicar el 90.88\% de la variación de los datos, por lo cual, se obtiene una reducción considerable en la dimensionalidad del sistema, resultado deseable para el propósito de este proyecto. 
 
-\item En primer lugar se tiene una alta influencia de las variables relacionadas con la acidez a la hora de explicar la componente principal 1, dichas variables se encuentran correlacionadas  de manera fuerte con el pH, el cual es una medida de acidez. 
+\item En segundo lugar se tiene una alta influencia de las variables relacionadas con la acidez a la hora de explicar la componente principal 1, dichas variables se encuentran correlacionadas  de manera fuerte con el pH, el cual es una medida de acidez. 
 
-\item El pH es la variable con mejor calidad al momento de explicar la componente principal 1 porque es la que forma un angulo más pequeño con dicho eje, seguida de las variables de acidez; complementando lo descrito anteriormente.
+\item Dado el ángulo y la norma de la variable acidez fija, se puede afirmar que esta es la que mejor explica la componente principal 1, seguida a su vez de la variable ácido cítrico. Cabe destacar también que el pH aporta gran calidad a esta componente porque aunque su longitud en el circulo de correlación no es tan alta como la de las variables anteriores, su ángulo respecto al eje formado por dicha componente es mínimo.
 
-\item Las variables relacionadas con dioxido de sulfuro explican son las que explican de mejor manera la componente principal 2, adicionalmente son aquellas con mejor calidad de representación en dicha componente porque el ángulo que forman con dicho eje es pequeño. Además están altamente correlacionadas.
+\item Las variables relacionadas con dioxido de azufre son las que explican de mejor manera la componente principal 2, adicionalmente son aquellas con mejor calidad de representación en dicha componente porque el ángulo que forman con dicho eje es pequeño y tienen una gran magnitud. Además están altamente correlacionadas.
 
-\item Finalmente, respecto a la implementación de los modelos descritos anteriormente, se puede afirmar que el análisis de componentes principales para esa causa fue de gran provecho, puesto que, como se mostró en los respectivos resultados, el modelo ajustado con el conjunto completo de covariables tiene un rendimiento similar al modelo con componentes principales, a pesar de que éste último explica aproximadamente el 91% de la variabilidad total de los datos originales, y además ganando terreno en términos de parsimonia.
+\item Finalmente, respecto a la implementación de los modelos descritos anteriormente, se puede afirmar que el análisis de componentes principales para esa causa fue de gran provecho, puesto que, como se mostró en los respectivos resultados, el modelo ajustado con el conjunto completo de covariables tiene un rendimiento similar al modelo con componentes principales, a pesar de que éste último explica aproximadamente el 91\% de la variabilidad total de los datos originales, y además ganando terreno en términos de parsimonia y eficiencia computacional.
 
-\item 
 \end{itemize}
 \bibliographystyle{ieeetr}
 \bibliography{bibliografia}
