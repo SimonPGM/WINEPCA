@@ -249,7 +249,7 @@ contrib_circle <- ggpubr::ggpar(contrib_circle,
 ggpubr::ggarrange(cos2_circle_anot, contrib_circle, ncol = 1, nrow = 2)
 ```
 
-De estos círculos de correlación se puede apreciar que, para la primera componente principal, las variables acidez fija, acidez cítrica y Ph son las que más contribuyen y ayudan a representar mejor dicha componente.
+De estos círculos de correlación se puede apreciar que, para la primera componente principal, las variables acidez fija, acidez cítrica y pH son las que más contribuyen y ayudan a representar mejor dicha componente.
 
 Ahora, para la segunda componente principal se presenta un caso similar, pero esta vez con las variables dióxido de azufre total y libre, puesto que, estas dos son las que mayor longitud de proyección y menor ángulo respecto a dicha componente principal presentan. 
 
