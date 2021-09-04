@@ -13,18 +13,22 @@ histacidez <- ggplot(descriptive, aes(x = fixed.acidity)) +
   geom_histogram(aes(fill = labels), color = "black",
                  binwidth = binw(descriptive$fixed.acidity)) +
   facet_wrap(~labels)+
-  labs(x = "Acidez fija", y = "Frecuencia", title = "F")
+  labs(x = "Acidez fija", y = "Frecuencia", title = "F")+
+  theme_minimal()
 
 boxpacidez <- ggplot(descriptive, aes(x = fixed.acidity)) +
   geom_boxplot(aes(fill = labels), alpha = 0.3)+
   coord_flip() +
   labs(y = "", x = "Acidez fija", fill = "Calidad del vino",
-       title = "Boxplot para la acidez fija")
+       title = "Boxplot para la acidez fija")+
+  theme_minimal()
   
 histgacidez <- ggplot(descriptive, aes(x = fixed.acidity)) +
   geom_histogram(fill = "cyan", color = "black",
                  binwidth = binw(descriptive$fixed.acidity)) +
-  labs(y = "Frecuencia", x = "Acidez fija", title = "Histograma para la acidez fija")
+  labs(y = "Frecuencia", x = "Acidez fija",
+       title = "Histograma para la acidez fija")+
+  theme_minimal()
 
 
 #Acidez volatil (diferencia media apreciable no normal)
@@ -32,45 +36,57 @@ histacidezv <- ggplot(descriptive, aes(x = volatile.acidity)) +
   geom_histogram(aes(fill = labels), color = "black",
                  binwidth = binw(descriptive$volatile.acidity)) +
   facet_wrap(~labels)+
-  labs(x = "Acidez volátil", y = "Frecuencia", title = "Histograma para la acidez volátil")
+  labs(x = "Acidez volátil", y = "Frecuencia",
+       title = "Histograma para la acidez volátil", fill = "Calidad del vino")+
+  theme_minimal()
 
 
 boxpacidezv <- ggplot(descriptive, aes(x = volatile.acidity)) +
   geom_boxplot(aes(fill = labels), alpha = 0.3)+
   coord_flip() +
   labs(y = "", x = "Acidez volátil", fill = "Calidad del vino",
-       title = "Boxplot para la acidez volatil")
+       title = "Boxplot para la acidez volatil")+
+  theme_minimal()
 
 histgacidezv <- ggplot(descriptive, aes(x = volatile.acidity)) +
   geom_histogram(fill = "cyan", color = "black",
                  binwidth = binw(descriptive$volatile.acidity)) +
-  labs(y = "Frecuencia", x = "Acidez volátil", title = "Histograma para la acidez volátil")
+  labs(y = "Frecuencia", x = "Acidez volátil",
+       title = "Histograma para la acidez volátil")+
+  theme_minimal()
 
 #acido cítrico (diferencia media apreciable no normal)
 histacidocit <- ggplot(descriptive, aes(x = citric.acid)) +
   geom_histogram(aes(fill = labels), color = "black",
                  binwidth = binw(descriptive$citric.acid)) +
   facet_wrap(~labels)+
-  labs(x = "Ácido cítrico", y = "Frecuencia", title = "Histograma para el ácido cítrico")
+  labs(x = "Ácido cítrico", y = "Frecuencia",
+       title = "Histograma para el ácido cítrico", fill = "Calidad del vino")+
+  theme_minimal()
 
 
 boxpacidocit <- ggplot(descriptive, aes(x = citric.acid)) +
   geom_boxplot(aes(fill = labels), alpha = 0.3)+
   coord_flip() +
   labs(y = "", x = "Ácido cítrico", fill = "Calidad del vino",
-       title = "Boxplot para el ácido cítrico")
+       title = "Boxplot para el ácido cítrico")+
+  theme_minimal()
 
 histgacidocit <- ggplot(descriptive, aes(x = citric.acid)) +
   geom_histogram(fill = "cyan", color = "black",
                  binwidth = binw(descriptive$citric.acid)) +
-  labs(x = "Ácido cítrico", y = "Frecuencia", title = "Histograma para el ácido cítrico")
+  labs(x = "Ácido cítrico", y = "Frecuencia",
+       title = "Histograma para el ácido cítrico")+
+  theme_minimal()
 
 #azucar residual (nivel medio igual, no normal, variabilidad igual)
 histresidsug <- ggplot(descriptive, aes(x = residual.sugar)) +
   geom_histogram(aes(fill = labels), color = "black",
                  binwidth = binw(descriptive$residual.sugar)) +
   facet_wrap(~labels)+
-  labs(x = "Azucar residual", y = "Frecuencia", title = "Histograma para el azucar residual")
+  labs(x = "Azucar residual", y = "Frecuencia",
+       title = "Histograma para el azucar residual")+
+  theme_minimal()
 
 
 boxpresidsug <- ggplot(descriptive, aes(x = residual.sugar)) +
@@ -149,19 +165,22 @@ histdensity <- ggplot(descriptive, aes(x = density)) +
                  binwidth = binw(descriptive$density)) +
   facet_wrap(~labels)+
   labs(x = "Densidad", y = "Frecuencia",
-       title = "Histograma para la densidad")
+       title = "Histograma para la densidad", fill = "Calidad del vino")+
+  theme_minimal()
 
 boxpdensity <- ggplot(descriptive, aes(x = density)) +
   geom_boxplot(aes(fill = labels), alpha = 0.3)+
   coord_flip() +
   labs(y = "", x = "Densidad", fill = "Calidad del vino",
-       title = "Boxplot para la densidad")
+       title = "Boxplot para la densidad")+
+  theme_minimal()
 
 histgdensity <- ggplot(descriptive, aes(x = density)) +
   geom_histogram(fill = "cyan", color = "black",
                  binwidth = binw(descriptive$density)) +
   labs(x = "Densidad", y = "Frecuencia",
-       title = "Histograma para la densidad")
+       title = "Histograma para la densidad")+
+  theme_minimal()
 
 #ph (nada interesante)
 histph <- ggplot(descriptive, aes(x = pH)) +
@@ -189,19 +208,22 @@ histsulfatos <- ggplot(descriptive, aes(x = sulphates)) +
                  binwidth = binw(descriptive$sulphates)) +
   facet_wrap(~labels)+
   labs(x = "Sulfatos", y = "Frecuencia",
-       title = "Histograma para los sulfatos")
+       title = "Histograma para los sulfatos", fill = "Calidad del vino")+
+  theme_minimal()
 
 boxpsulfatos <- ggplot(descriptive, aes(x = sulphates)) +
   geom_boxplot(aes(fill = labels), alpha = 0.3)+
   coord_flip() +
   labs(y = "", x = "Sulfatos", fill = "Calidad del vino",
-       title = "Boxplot para los sulfatos")
+       title = "Boxplot para los sulfatos")+
+  theme_minimal()
 
 histgsulfatos <- ggplot(descriptive, aes(x = sulphates)) +
   geom_histogram(fill = "cyan", color = "black",
                  binwidth = binw(descriptive$sulphates)) +
   labs(x = "Sulfatos", y = "Frecuencia",
-       title = "Histograma para los sulfatos")
+       title = "Histograma para los sulfatos")+
+  theme_minimal()
 
 #Alcohol (niveles de variabilidad muy distintos)
 histalco <- ggplot(descriptive, aes(x = alcohol)) +
@@ -209,18 +231,21 @@ histalco <- ggplot(descriptive, aes(x = alcohol)) +
                  binwidth = binw(descriptive$alcohol)) +
   facet_wrap(~labels)+
   labs(x = "Alcohol", y = "Frecuencia",
-       title = "Histograma para el alcohol")
+       title = "Histograma para el alcohol", fill = "Calidad del vino")+
+  theme_minimal()
 
 boxpalco<- ggplot(descriptive, aes(x = alcohol)) +
   geom_boxplot(aes(fill = labels), alpha = 0.3)+
   coord_flip() +
   labs(y = "", x = "Alcohol", fill = "Calidad del vino",
-       title = "Boxplot para el alcohol")
+       title = "Boxplot para el alcohol")+
+  theme_minimal()
 
 histgalco <- ggplot(descriptive, aes(x = alcohol)) +
   geom_histogram(fill = "cyan", color = "black",
                  binwidth = binw(descriptive$alcohol)) +
   labs(x = "Alcohol", y = "Frecuencia",
-       title = "Histograma para el alcohol")
+       title = "Histograma para el alcohol")+
+  theme_minimal()
 
 normalidad <- MVN::mvn(descriptive[, -12])$univariateNormality

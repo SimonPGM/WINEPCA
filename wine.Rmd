@@ -84,6 +84,81 @@ Es bueno advertir que conocer qué variables aportan mayor variabilidad permitir
 
 
 \newpage
+
+
+\section{Estadística descriptiva}
+
+\subsection{Variables sin cualidades descriptivas destacables}
+
+Una vez iniciado el análisis descriptivo que respecta a las variables acidez fija, azúcar residual, cloruros, dióxido de azufre libre, dióxido de azufre total y pH, no se encontraron cualidades de interés que sean destacables para la construcción del presente documento, por lo cual se omite cualquier reporte sobre estas y se procede a presentar los resultados del análisis exploratorio sobre las demás variables presentes en la base de datos propuesta.
+
+
+\subsection{Variables en las que se identificó un comportamiento descriptivo destacable}
+
+```{r lodesc, echo = F}
+source("Descriptive.R")
+```
+
+\subsubsection{Acidez volátil}
+
+```{r ed1, echo=F, fig.align='center'}
+boxpacidezv
+```
+
+Presentado este resultado, se puede observar que para la variable acidez volátil se manifiesta un cambio notable en su nivel medio, estando este último relacionado de manera inversa con la calidad puesto que, mientras los niveles de esta variable aumenten, la calidad del vino disminuye.
+
+\subsubsection{Ácido cítrico}
+
+```{r ed2, echo = F, fig.align='center'}
+boxpacidocit
+```
+
+Para el ácido cítrico puede notarse que está relacionado en este caso de un modo directo con la calidad del vino, ya que para vinos clasificados en calidades más altas, los niveles de ácido cítrico son mayores. Cabe destacar además que para calidades 5 y 6 de vino, la variabilidad de la acidez cítrica es mayor.
+
+\subsubsection{Densidad}
+
+```{r edlastt, echo = F, fig.align='center'}
+boxpdensity
+```
+
+Con esto puede observarse que en vinos de calidades mayores, la variabilidad en la densidad es mayor, comportamiento que es plausible a partir del nivel 5 de calidad en el vino.
+
+\subsubsection{Sulfatos}
+
+```{r edlasto, echo = F, fig.align='center'}
+boxpsulfatos
+```
+
+Similarmente a como sucedió con el ácido cítrico, los sulfatos presentan una relación de directa proporcionalidad con el nivel de calidad del vino. Este comportamiento es evidente en todos los niveles presentes en el anterior gráfico, sin embargo, entre los vinos de calidad 7 y 8 no existe diferencia estadística significativa que afirme diferencia en los niveles medios de sulfatos.
+
+\subsubsection{Alcohol}
+
+```{r edlast, echo=F, fig.align='center'}
+boxpalco
+```
+
+Por último, para el alcohol se puede apreciar que este, en términos generales, está más presente en vinos de mejores calidades, diferencia que se aprecia de una mejor manera en los niveles 6, 7 y 8 de calidad. Es también destacable que en los niveles anteriormente mencionados, incluyendo la clasificación 4 en calidad de vino, se presentan valores más dispersos de nivel de alcohol, es decir, existe mayor variabilidad de alcohol en estas calidades de bebida.
+
+\newpage
+
+\subsection{Normalidad}
+
+Se realizó la prueba de normalidad de Anderson-Darlign a cada una de las
+variables, obteniendo el siguente resultado.
+
+```{r norm, echo = F}
+normalidad[, -1] %>%
+  kable(row.names = F, booktab = T, col.names = c("Variable", "Estadístico",
+                                                  "Valor P", "Normalidad"),
+        caption = "Tabla de resultados para prueba de normalidad",
+        align = "c", longtable = T) %>%
+  kable_styling(position = "center")
+```
+
+Como se puede apreciar en la tabla, ninguna variable posee
+distribución normal y por ende se puede garantizar que en conjunto,
+dichas variables no pueden poseer distribución normal multivariada.
+
 \section{Informe técnico}
 
 ```{r PCA1, echo=F}
@@ -137,7 +212,7 @@ En los siguientes dos gráficos, se presenta la información previa visualmente:
 Adicionalmente, se grafica el porcentaje de variabilidad acumulada, este último permite determinar visualmente cuántas componentes principales se requieren para explicar cierto porcentaje de variabilidad en los datos, además, permite dar una idea de cuánto es el aumento de variabilidad que se explica cuando se añade una componente principal.
 
 
-```{r PCA3, echo=F, fig.height=9, fig.width=7, message=F}
+```{r PCA3, echo=F, fig.height=9, fig.width=7, message=F, fig.align='center'}
 #Plots (Varianza acumulada y porcentaje de varianza)
 #Screeplot (Porcentaje de variabilidad)
 por_var <- fviz_eig(wine_pca, addlabels = T, xlim = c(1, 11))
@@ -166,7 +241,7 @@ Teniendo en cuenta que, por definición, las componentes principales 1 y 2 son l
 
 Para dar un ejemplo, se puede notar que relativo a la componente principal 1, las variables acidez fija, ácido cítrico, pH y densidad, tienen una contribución mayor a la promedio. 
 
-```{r PCA4, echo=F}
+```{r PCA4, echo=F, fig.align='center'}
 #Plots de variables que mas contribuyen a las PCs
 contrib_plot_pc1 <- fviz_contrib(wine_pca, choice = "var",
                                  top = 11)
@@ -187,17 +262,21 @@ Como se advirtió previamente, la contribución no es una medida de calidad. Por
 
 Gráficamente, una variable que esté más cerca al círculo unitario indica mayor contribución. Análogamente, una variable que forme un ángulo más pequeño con el eje respectivo de la componente principal indica mayor calidad. Esto, se traduce en que una calidad se puede considerar alta cuando el $\cos^2(\theta) \geq 0.9$.
 
+\newpage
+
 Haciendo uso de otra herramienta para resaltar las variables que más contribuyen a cada dimensión, se tiene el siguiente gráfico de correlación entre las variables y las componentes principales.
 
-```{r CorrplotContrib, echo=F, fig.align=T}
+```{r CorrplotContrib, echo=F, fig.align='center'}
 corrplot::corrplot(variables$cor, is.corr = F, outline = T, 
                    tl.col = "black")
 ```
 
+\newpage
+
 En los siguientes círculos de correlación se ilustra gráficamente las contribuciones y los cosenos cuadrados.
 
 
-```{r PCA5, echo=F, fig.height=9, fig.width=7}
+```{r PCA5, echo=F, fig.height=8, fig.width=7}
 #Circulos de correlacion
 cos2_circle <- fviz_pca_var(wine_pca, repel = T, 
                             col.var = "cos2",
@@ -354,7 +433,7 @@ colnames(variables$coord) <- c("CP1", "CP2", "CP3", "CP4",
 #Mostrar tabla
 kable(round(variables$coord, 4), escape = F, longtable = T, 
       booktab = T,
-      caption = "Coordenadas")  %>%
+      caption = "Correlaciones")  %>%
       kable_styling(latex_options = c("hold_position", "repeat_header"))
 ```
 
@@ -403,6 +482,8 @@ Cabe aclarar que se emplearon métodos no paramétricos para contrastar las hip�
 tienen valores del RMSE para conjuntos de entrenamiento y prueba gracias
 a la naturaleza del proceso de validación utilizado.
 
+\newpage 
+
 A continuación se muestra el resultado de la distribución del estadístico de prueba Bootstrap.
 
 ```{r MODS, echo = F}
@@ -450,7 +531,7 @@ ggpubr::ggarrange(histboot1, histboot2, nrow = 2, ncol = 1)
 
 Como se puede observar, el estadístico de prueba reside en el interior del
 intervalo de confianza Bootstrap del 95%, por lo que no se rechaza la hipótesis de
-que el RMSE  media de ambos modelos es el mismo para el conjunto de entrenamiento.
+que el RMSE  medio de ambos modelos es el mismo para el conjunto de entrenamiento y el de prueba durante el proceso de grid search k-fold cross validation.
 
 Se reportan los p-valores de dicha prueba.
 
@@ -500,12 +581,15 @@ Así que al considerar las conclusiones de la prueba Bootstrap (no existen
 diferencias significativas entre los rendimientos del modelo al predecir)
 y la tabla, se puede aseverar con total tranquilidad que el modelo ajustado
 con los datos en el espacio de las componentes principales es igual de bueno
-que el ajustado sobre los datos en su espacio original a pesar
+que el ajustado sobre los datos en su espacio original, a pesar
 de que el primero contenía un conjunto que explicaba el 90% de la variabilidad
-total del conjunto original. Adicionalmente se tiene una ganancia a nivel de coste
+total del conjunto original. Adicionalmente, se tiene una ganancia a nivel de coste
 computacional pues al tener menos columnas, el número de operaciones
 que debe realizar el software para ajustar modelos es menor y por ende esto
 desemboca en un proceso más rápido y eficiente.
+
+\newpage
+
 \section{Conclusiones}
 
 \begin{itemize}
@@ -520,5 +604,8 @@ desemboca en un proceso más rápido y eficiente.
 \item Finalmente, respecto a la implementación de los modelos descritos anteriormente, se puede afirmar que el análisis de componentes principales para esa causa fue de gran provecho, puesto que, como se mostró en los respectivos resultados, el modelo ajustado con el conjunto completo de covariables tiene un rendimiento similar al modelo con componentes principales, a pesar de que éste último explica aproximadamente el 91\% de la variabilidad total de los datos originales, y además ganando terreno en términos de parsimonia y eficiencia computacional.
 
 \end{itemize}
+
+\newpage
+
 \bibliographystyle{ieeetr}
 \bibliography{bibliografia}
