@@ -1,3 +1,4 @@
+library(tidyverse)
 binw <- function(x) {
   n <- length(x)
   k <- round(1 + 3.322*log10(n))
