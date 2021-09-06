@@ -1,6 +1,6 @@
-source("Descriptive.R")
-source("PCASlides.R")
-source("BootstrapSlides.R")
+source("Descriptive.R", encoding = "UTF-8")
+source("PCASlides.R", encoding = "UTF-8")
+source("BootstrapSlides.R", encoding = "UTF-8")
 
 body <- dashboardBody(
   tags$head(

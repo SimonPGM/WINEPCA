@@ -1,8 +1,8 @@
 library(shiny)
 library(shinydashboard)
 
-source("SideBar.R")
-source("Body.R")
+source("SideBar.R", encoding = "UTF-8")
+source("Body.R", encoding = "UTF-8")
 
 ui <- dashboardPage(
   dashboardHeader(title = "Proyecto final"),
