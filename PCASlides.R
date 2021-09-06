@@ -63,7 +63,7 @@ contrib_both <- ggpubr::ggarrange(contrib_plot_pc1, contrib_plot_pc2,
 contrib_text <- c('
                    <p style="text-align:center">
                    Las barras indican el porcentaje de contribución de cada variable a cada componente principal.
-                   La linea roja punteada indica el porcentaje medio de contribución esperado.
+                   La linea roja punteada indica el porcentaje medio de contribución esperado de cada variable a la respectiva componente.
                    </p>
                    ',
                   '

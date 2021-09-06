@@ -14,7 +14,9 @@ histacidez <- ggplot(descriptive, aes(x = fixed.acidity)) +
   geom_histogram(aes(fill = labels), color = "black",
                  binwidth = binw(descriptive$fixed.acidity)) +
   facet_wrap(~labels)+
-  labs(x = "Acidez fija", y = "Frecuencia", title = "F")+
+  labs(x = "Acidez fija", y = "Frecuencia",
+       title = "Histograma para la acidez fija",
+       fill = "Calidad del vino")+
   theme_minimal()
 
 boxpacidez <- ggplot(descriptive, aes(x = fixed.acidity)) +
@@ -86,7 +88,8 @@ histresidsug <- ggplot(descriptive, aes(x = residual.sugar)) +
                  binwidth = binw(descriptive$residual.sugar)) +
   facet_wrap(~labels)+
   labs(x = "Azucar residual", y = "Frecuencia",
-       title = "Histograma para el azucar residual")+
+       title = "Histograma para el azucar residual",
+       fill = "Calidad del vino")+
   theme_minimal()
 
 
@@ -94,19 +97,24 @@ boxpresidsug <- ggplot(descriptive, aes(x = residual.sugar)) +
   geom_boxplot(aes(fill = labels), alpha = 0.3)+
   coord_flip() +
   labs(y = "", x = "Azucar residual", fill = "Calidad del vino",
-       title = "Boxplot para el azucar residual")
+       title = "Boxplot para el azucar residual")+
+  theme_minimal()
 
 histgresidsug <- ggplot(descriptive, aes(x = residual.sugar)) +
   geom_histogram(fill = "cyan", color = "black",
                  binwidth = binw(descriptive$residual.sugar)) +
-  labs(x = "Azucar residual", y = "Frecuencia", title = "Histograma para el azucar residual")
+  labs(x = "Azucar residual", y = "Frecuencia",
+       title = "Histograma para el azucar residual")+
+  theme_minimal()
 
 #chlorides (no normal, nada interesante que mostrar)
 histchlorides <- ggplot(descriptive, aes(x = chlorides)) +
   geom_histogram(aes(fill = labels), color = "black",
                  binwidth = binw(descriptive$chlorides)) +
   facet_wrap(~labels)+
-  labs(x = "Cloruros", y = "Frecuencia", title = "Histograma para los cloruros")
+  labs(x = "Cloruros", y = "Frecuencia",
+       title = "Histograma para los cloruros",
+       fill = "Calidad del vino")
 
 
 boxpchlorides <- ggplot(descriptive, aes(x = chlorides)) +
@@ -125,40 +133,42 @@ histfreeslufdiox <- ggplot(descriptive, aes(x = free.sulfur.dioxide)) +
   geom_histogram(aes(fill = labels), color = "black",
                  binwidth = binw(descriptive$free.sulfur.dioxide)) +
   facet_wrap(~labels)+
-  labs(x = "Dióxido de sulfuro libre", y = "Frecuencia",
-       title = "Histograma para el dióxido de sulfuro libre")
+  labs(x = "Dióxido de azufre libre", y = "Frecuencia",
+       title = "Histograma para el dióxido de azufre libre",
+       fill = "Calidad del vino")
 
 boxpfreeslufdiox <- ggplot(descriptive, aes(x = free.sulfur.dioxide)) +
   geom_boxplot(aes(fill = labels), alpha = 0.3)+
   coord_flip() +
-  labs(y = "", x = "Dióxido de sulfuro libre", fill = "Calidad del vino",
-       title = "Boxplot para el dióxido de sulfuro libre")
+  labs(y = "", x = "Dióxido de azufre libre", fill = "Calidad del vino",
+       title = "Boxplot para el dióxido de azufre libre")
 
 histgfreeslufdiox <- ggplot(descriptive, aes(x = free.sulfur.dioxide)) +
   geom_histogram(fill = "cyan", color = "black",
                  binwidth = binw(descriptive$free.sulfur.dioxide)) +
-  labs(x = "Dióxido de sulfuro libre", y = "Frecuencia",
-       title = "Histograma para el dióxido de sulfuro libre")
+  labs(x = "Dióxido de azufre libre", y = "Frecuencia",
+       title = "Histograma para el dióxido de azufre libre")
 
 #dioxido de sulfuro total (nada interesante)
 histtotalslufdiox <- ggplot(descriptive, aes(x = total.sulfur.dioxide)) +
   geom_histogram(aes(fill = labels), color = "black",
                  binwidth = binw(descriptive$total.sulfur.dioxide)) +
   facet_wrap(~labels)+
-  labs(x = "Dióxido de sulfuro total", y = "Frecuencia",
-       title = "Histograma para el dióxido de sulfuro total")
+  labs(x = "Dióxido de azufre total", y = "Frecuencia",
+       title = "Histograma para el dióxido de azufre total",
+       fill = "Calidad del vino")
 
 boxptotalslufdiox <- ggplot(descriptive, aes(x = total.sulfur.dioxide)) +
   geom_boxplot(aes(fill = labels), alpha = 0.3)+
   coord_flip() +
-  labs(y = "", x = "Dióxido de sulfuro libre", fill = "Calidad del vino",
-       title = "Boxplot para el dióxido de sulfuro total")
+  labs(y = "", x = "Dióxido de azufre total", fill = "Calidad del vino",
+       title = "Boxplot para el dióxido de azufre total")
 
 histgtotalslufdiox <- ggplot(descriptive, aes(x = total.sulfur.dioxide)) +
   geom_histogram(fill = "cyan", color = "black",
                  binwidth = binw(descriptive$total.sulfur.dioxide)) +
-  labs(x = "Dióxido de sulfuro total", y = "Frecuencia",
-       title = "Histograma para el dióxido de sulfuro total")
+  labs(x = "Dióxido de azufre total", y = "Frecuencia",
+       title = "Histograma para el dióxido de azufre total")
 
 #densidad(cambio en los niveles de variabilidad, no normal)
 histdensity <- ggplot(descriptive, aes(x = density)) +
@@ -189,7 +199,8 @@ histph <- ggplot(descriptive, aes(x = pH)) +
                  binwidth = binw(descriptive$pH)) +
   facet_wrap(~labels)+
   labs(x = "Ph", y = "Frecuencia",
-       title = "Histograma para el Ph")
+       title = "Histograma para el Ph",
+       fill = "Calidad del vino")
 
 boxpph <- ggplot(descriptive, aes(x = pH)) +
   geom_boxplot(aes(fill = labels), alpha = 0.3)+

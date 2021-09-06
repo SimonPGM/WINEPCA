@@ -8,7 +8,24 @@ body <- dashboardBody(
   ),
   tabItems(
     tabItem(tabName = "SIDEMAIN",
-            h1("Principal")),
+            h1("Trabajo Final Introducción al Análisis Multivariado"),
+            HTML(
+              '
+              <img src="logounalslides.png" width="75%" height="75%" style="display: block; margin-left: auto; margin-right: auto;">
+              '
+            ),
+            fluidRow(
+              column(6, 
+                     h2("Juan José Galeano Arenas")),
+              column(5, offset = 1,
+                     h2("Sebastián Gaviria Sánchez"))
+            ),
+            fluidRow(
+              column(6,
+                    h2("Simón Pedro Galeano Muñoz")),
+              column(5, offset = 1,
+                     h2("Santiago Zuluaga Ayala"))
+            )),
     tabItem(tabName = "NOINT",
             fluidRow(
               column(2,
@@ -20,6 +37,7 @@ body <- dashboardBody(
                                   label = "Azúcar residual"),
                      actionButton(inputId = "ButtonNOINT3",
                                   label = "Cloruruos"),
+                     
                      actionButton(inputId = "ButtonNOINT4",
                                   label = "Dióxido de azufre libre"),
                      actionButton(inputId = "ButtonNOINT5",
@@ -56,7 +74,7 @@ body <- dashboardBody(
             ),
     tabItem(tabName = "NORM",
             fluidRow(
-              h1("Resultados de test Anderson-Darling para normalidad")
+              h1("Resultados del test Anderson-Darling para normalidad")
               ),
             fluidRow(
               HTML('
@@ -159,8 +177,20 @@ body <- dashboardBody(
                   modelo ajustado usando los datos de prueba llevados al espacio de las componentes principales
                   también obtiene medidas muy bajas, de hecho en todas ellas posee un error relativo porcentual
                   no mayor a 6.4 %, por lo que presenta un rendimiento muy similar al modelo original.
-
                    </p>
+                   <br>
+                   <p style="text-align:center">
+                  Así que al considerar las conclusiones de la prueba Bootstrap (no existen diferencias
+                  significativas entre los rendimientos del modelo al predecir) y la tabla, se puede aseverar con
+                  total tranquilidad que el modelo ajustado con los datos en el espacio de las componentes
+                  principales es igual de bueno que el ajustado sobre los datos en su espacio original, a pesar
+                  de que el primero contenía un conjunto que explicaba el 90 % de la variabilidad total del
+                  conjunto original. Adicionalmente, se tiene una ganancia a nivel de coste computacional pues
+                  al tener menos columnas, el número de operaciones que debe realizar el software para ajustar
+                  modelos es menor y por ende esto desemboca en un proceso más rápido y eficiente.
+                    </p>
+                    <br>
+                    <img src="checklogo.png" width="25%" height="25%" style="display: block; margin-left: auto; margin-right: auto;">
                    ')
               )
             ),
