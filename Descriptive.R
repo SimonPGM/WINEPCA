@@ -250,3 +250,6 @@ histgalco <- ggplot(descriptive, aes(x = alcohol)) +
   theme_minimal()
 
 normalidad <- MVN::mvn(descriptive[, -12])$univariateNormality
+colnames(normalidad) <- c("Prueba", "Variable",
+                          "Valor del estadístico de prueba", "Valor P",
+                          "Normalidad")

@@ -15,12 +15,10 @@ sidebar <- dashboardSidebar(
              icon = icon("stats", lib = "glyphicon"),
              menuSubItem("Variabilidad Acumulada",
                          tabName = "VARACUM"),
-             menuSubItem("Contribuciones y cosenos cuadrados",
-                         tabName = "CONTRIBSCOS"),
+             menuSubItem("Contribuciones",
+                         tabName = "CONTRIBS"),
              menuSubItem("Círculo de Correlaciones",
-                         tabName = "CORRC"),
-             menuSubItem("Tablas",
-                         tabName = "PCATABS")
+                         tabName = "CORRC")
       ),
     menuItem("Random Forest Regressor", tabName = "SIDMOD",
              icon = icon("tasks", lib = "glyphicon"),
