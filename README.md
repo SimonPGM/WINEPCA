@@ -1,2 +1,2 @@
-# MINSTPCA
-Reducing MINST data set by using principal component analysis.
+# WINEPCA
+Reducing WINE data set by using principal component analysis.
